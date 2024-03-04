@@ -8,7 +8,7 @@
     "database.user": "airflow",
     "database.password": "airflow",
     "database.dbname" : "demo",
-    "database.server.name": "postgres-postgres-1",
+    "database.server.name": "127.0.0.1",
     "table.include.list": "public.(.*)",
     "heartbeat.interval.ms": "5000",
     "slot.name": "dbname_debezium",
