@@ -9,13 +9,13 @@
     "database.password": "airflow",
     "database.dbname" : "demo",
     "database.server.name": "172.17.0.1",
-    "table.include.list": "public.(.*)",
+    "table.include.list": "booking.(.*)",
     "heartbeat.interval.ms": "5000",
     "slot.name": "dbname_debezium",
     "publication.name": "dbname_publication",
     "transforms": "AddPrefix",
     "transforms.AddPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
     "transforms.AddPrefix.regex": "pg-dev.public.(.*)",
-    "transforms.AddPrefix.replacement": "data.cdc.dbname"
+    "transforms.AddPrefix.replacement": "data.cdc.demo"
   }
 }
