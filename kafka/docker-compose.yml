@@ -2,7 +2,7 @@ version: "3.9"
 services:
   zookeeper:
     hostname:  zookeeper
-    image: nexus.bia-tech.ru/confluentinc/cp-zookeeper:latest
+    image: confluentinc/cp-zookeeper:latest
     environment:
       ZOOKEEPER_CLIENT_PORT: 22181
       ZOOKEEPER_TICK_TIME: 2000
@@ -13,7 +13,7 @@ services:
       - /data/kafka/files/:/opt/files
 #10.182.19.20
   kafka:
-    image: nexus.bia-tech.ru/confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:latest
     depends_on:
       - zookeeper
     ports:
