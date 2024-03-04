@@ -12,10 +12,7 @@
     "table.include.list": "booking.(.*)",
     "heartbeat.interval.ms": "5000",
     "slot.name": "dbname_debezium",
-    "publication.name": "dbname_publication",
-    "transforms": "AddPrefix",
-    "transforms.AddPrefix.type": "org.apache.kafka.connect.transforms.RegexRouter",
-    "transforms.AddPrefix.regex": "pg-dev.public.(.*)",
-    "transforms.AddPrefix.replacement": "data.cdc.demo"
+    "publication.name": "dbname_publication"
+
   }
 }
