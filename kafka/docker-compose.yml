@@ -22,8 +22,8 @@ services:
       # - ZOOKEEPER_SYNC_LIMIT=2
       # - ZOOKEEPER_SERVERS=zk-1:2888:3888;zk-2:2888:3888;zk-3:2888:3888
 
-    networks:
-      - confluent
+    # networks:
+    #   - confluent
   kafka-1:
     image: confluentinc/cp-kafka:7.1.1-1-ubi8
     restart: always
