@@ -53,7 +53,7 @@ services:
     depends_on:
       - kafka
     environment:
-      - BOOTSTRAP_SERVERS='kafka:9092'
+      - BOOTSTRAP_SERVERS='172.21.0.1:29092'
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
