@@ -1,0 +1,73 @@
+version: '3.7'
+services:
+  zookeeper:
+    hostname:  zookeeper
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 22181
+      ZOOKEEPER_TICK_TIME: 2000
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    ports:
+      - 22181:22181
+    volumes:
+      - /data/kafka/files/:/opt/files
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 29092:29092
+    hostname: kafka
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
+
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,BROKER://0.0.0.0:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.0.4:29092,BROKER://kafka:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+    volumes:
+      - /data/kafka/files/:/opt/file
+
+
+  postgres:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432:5432"
+    volumes:
+      - /tmp:/tmp
+  debezium:
+    image: debezium/connect:1.2
+    restart: always
+    environment:
+      - BOOTSTRAP_SERVERS='kafka:29092'
+      - GROUP_ID=1
+      - CONFIG_STORAGE_TOPIC=my_connect_configs
+      - OFFSET_STORAGE_TOPIC=my_connect_offsets
+      - STATUS_STORAGE_TOPIC=my_connect_statuses
+
+    ports:
+      - "8083:8083"
+
+  mssql:
+    hostname:  mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: Y
+      MSSQL_SA_PASSWORD: sQ6oJQM6dvQszszt
+    ports:
+      - 1433:1433
+    volumes:
+      - /data/kafka/files/:/opt/files
+sudo docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD="$MSSQL_SA_PASSWORD \
+   -p 1433:1433 --name sql1 --hostname sql1 \
+   -d \
+   mcr.microsoft.com/mssql/server:2022-latest
