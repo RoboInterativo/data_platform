@@ -44,11 +44,12 @@ services:
       - "5432:5432"
     volumes:
       - /tmp:/tmp
+
   debezium:
     image: debezium/connect:1.2
     restart: always
     environment:
-      - BOOTSTRAP_SERVERS='kafka:29092'
+      - BOOTSTRAP_SERVERS='kafka:9092'
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
