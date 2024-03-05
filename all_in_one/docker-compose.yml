@@ -18,13 +18,15 @@ services:
       - zookeeper
     ports:
       - 29092:29092
+      - 9092:9092
+
     hostname: kafka
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:22181
 
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:29092,BROKER://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://192.168.0.4:29092,BROKER://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,BROKER://kafka:9092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -48,6 +50,8 @@ services:
   debezium:
     image: debezium/connect:1.2
     restart: always
+    depends_on:
+      - kafka
     environment:
       - BOOTSTRAP_SERVERS='kafka:9092'
       - GROUP_ID=1
