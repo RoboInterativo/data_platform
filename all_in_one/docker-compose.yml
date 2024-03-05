@@ -85,4 +85,4 @@ services:
     networks:
       - confluent
   networks:
-      - confluent
+    confluent:
