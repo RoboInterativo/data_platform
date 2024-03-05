@@ -49,7 +49,7 @@ services:
     image: debezium/connect:1.2
     restart: always
     environment:
-      - BOOTSTRAP_SERVERS='kafka:9092'
+      - BOOTSTRAP_SERVERS='192.168.0.4:29092'
       - GROUP_ID=1
       - CONFIG_STORAGE_TOPIC=my_connect_configs
       - OFFSET_STORAGE_TOPIC=my_connect_offsets
