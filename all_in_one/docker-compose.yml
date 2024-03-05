@@ -11,7 +11,8 @@ services:
       - 22181:22181
     volumes:
       - /data/kafka/files/:/opt/files
-
+    networks:
+      - confluent
   kafka:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -42,7 +43,8 @@ services:
     volumes:
       - /data/kafka/files/:/opt/file
 
-
+    networks:
+      - confluent
   postgres:
     image: postgres:12-alpine
     restart: always
@@ -54,7 +56,8 @@ services:
       - 5432:5432
     volumes:
       - /tmp:/tmp
-
+    networks:
+      - confluent
   debezium:
     image: debezium/connect:1.2
     restart: always
@@ -69,7 +72,8 @@ services:
 
     ports:
       - 8083:8083
-
+    networks:
+      - confluent
   mssql:
     hostname:  mssql
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -78,3 +82,7 @@ services:
       MSSQL_SA_PASSWORD: sQ6oJQM6dvQszszt
     ports:
       - 1433:1433
+    networks:
+      - confluent
+networks:
+      - confluent
