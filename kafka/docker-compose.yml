@@ -19,7 +19,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports:
-      - 22181:2181
+      - 22181:22181
     volumes:
       - /data/kafka/files/:/opt/files
 #10.182.19.20
