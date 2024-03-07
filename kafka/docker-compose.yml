@@ -9,7 +9,7 @@ services:
     environment:
       - KAFKA_CLUSTERS_0_NAME=local
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.0.4:29092
-    #  - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:22181
+      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:22181
 
   zookeeper:
     hostname:  zookeeper
@@ -19,7 +19,7 @@ services:
       ZOOKEEPER_TICK_TIME: 2000
       KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     ports:
-      - 22181:22181
+      - 22181:2181
     volumes:
       - /data/kafka/files/:/opt/files
 #10.182.19.20
