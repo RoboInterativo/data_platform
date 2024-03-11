@@ -1,0 +1,31 @@
+# Tools
+watchdog~=2.1.4
+requests~=2.21.0
+deprecation
+Cython
+filelock
+bia-common>=1.2.6  # Not public package
+
+# Process
+pykka~=3.0.2
+
+# Kafka
+confluent-kafka~=1.7.0
+fastavro~=1.4.4
+
+# Arguments Parser
+argparse~=1.2.1
+colorlog~=4.1.0
+
+# SQL
+sqlalchemy~=1.4.25
+# pymssql~=2.2.2
+pyodbc~=4.0.39
+
+# Aggregation
+numpy==1.19.5
+pandas==1.4.1
+fastparquet~=0.7.1
+pyarrow~=6.0.0
+python-snappy~=0.6.0
+jaydebeapi~=1.2.3

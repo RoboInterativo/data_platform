@@ -1,0 +1,12 @@
+numpy==1.21.6
+pandas==1.4.1
+great_expectations==0.17.8
+ipython==8.5.0
+hdfs==2.7.0
+Cython
+Flask>=1.1.2
+prometheus-client~=0.13.1
+argparse>=1.2.1
+colorlog>=4.1.0
+urlopen
+bia-common
