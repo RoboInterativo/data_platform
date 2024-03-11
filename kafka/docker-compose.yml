@@ -1,16 +1,26 @@
 version: "3.9"
 services:
-  kafka-ui:
-    image: provectuslabs/kafka-ui
-    container_name: kafka-ui
-    ports:
-      - 8090:8080
-    restart: always
-    environment:
-      - KAFKA_CLUSTERS_0_NAME=local
-      - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.0.4:29092
-      - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:22181
+  # kafka-ui:
+  #   image: provectuslabs/kafka-ui
+  #   container_name: kafka-ui
+  #   ports:
+  #     - 8090:8080
+  #   restart: always
+  #   environment:
+  #     - KAFKA_CLUSTERS_0_NAME=local
+  #     - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.0.4:29092
+  #     - KAFKA_CLUSTERS_0_ZOOKEEPER=zookeeper:22181
 
+
+  schema:
+    hostname:  shema
+    image: confluentinc/cp-schema-registry:5.5.3
+    environment:
+      - SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL=192.168.0.4:22181
+      - SCHEMA_REGISTRY_HOST_NAME=192.168.0.4
+      - SCHEMA_REGISTRY_LISTENERS=http://192.168.0.4:8081,http://localhost:8081
+    ports:
+      - 8081:8081
   zookeeper:
     hostname:  zookeeper
     image: confluentinc/cp-zookeeper:latest

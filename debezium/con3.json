@@ -1,0 +1,20 @@
+{
+    "name": "cdc-connector",
+    "config": {
+        "connector.class": "io.debezium.connector.sqlserver.SqlServerConnector",
+        "tasks.max": "1",
+        "database.server.name": "192.168.0.4",
+        "database.hostname": "192.168.0.46",
+        "database.port": "1433",
+        "database.user": "dev1c",
+        "database.password": "",
+        "database.names": "gp_work",
+        "database.history.kafka.bootstrap.servers": "10.182.19.20:29092",
+        "database.history.kafka.topic": "schema-changes.inventory",
+        "key.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "key.converter.schema.registry.url": "http://u-t-rnd-hdead-shema-1.srv.bia-tech.ru:8081",
+        "value.converter.schema.registry.url": "http://u-t-rnd-hdead-shema-1.srv.bia-tech.ru:8081",
+        "database.encrypt": "false"
+    }
+}
