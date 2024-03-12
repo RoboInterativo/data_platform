@@ -103,7 +103,7 @@ services:
       #- ./files:/opt/jmx
       - /data/kafka/files/:/opt/files
       - /data/kafka/data:/var/lib/kafka/data
-    networks:
-      - confluent
+    # networks:
+    #   - confluent
 #jmx_prometheus_javaagent-0.12.0.jar
 #kafka-2_0_0.yml
