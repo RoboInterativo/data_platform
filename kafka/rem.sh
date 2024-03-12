@@ -1,2 +1,2 @@
-rm /data/kafka/data/* -R
-rm /data/zookeeper/data/* -R
+rm /data/kafka/data/* -r
+rm /data/zookeeper/data/* -r
