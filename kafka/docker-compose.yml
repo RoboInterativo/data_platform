@@ -35,9 +35,9 @@ services:
     environment:
       #- KAFKA_CLUSTERS_0_NAME=local
       #- KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=172.17.0.1:29092
-      #- KAFKA_CLUSTERS_0_ZOOKEEPER=172.17.0.1:22181
+      KAFKA_CLUSTERS_0_ZOOKEEPER: 172.17.0.1:22181
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 172.17.0.1:22181
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 172.17.0.1:29092
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";'
@@ -103,5 +103,7 @@ services:
       #- ./files:/opt/jmx
       - /data/kafka/files/:/opt/files
       - /data/kafka/data:/var/lib/kafka/data
+    networks:
+      - confluent
 #jmx_prometheus_javaagent-0.12.0.jar
 #kafka-2_0_0.yml
