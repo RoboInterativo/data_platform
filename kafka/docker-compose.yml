@@ -1,31 +1,31 @@
-version: "3.9"
-services:
-### Kafka Exporter #########################################
-  kafka-exporter:
-    container_name: kafka-exporter
-    image: danielqsj/kafka-exporter
-    restart: unless-stopped
-    depends_on:
-      - kafka
-
-    #command: ["--kafka.server=mq:9092"]
-    command: ["--kafka.server=192.168.0.4:29092",  "--sasl.enabled", "--sasl.username=admin", "--sasl.password=admin-secret", "--sasl.mechanism=plain"]
-
-#sasl.enabled	false	Connect using SASL/PLAIN
-#sasl.handshake	true	Only set this to false if using a non-Kafka SASL proxy
-#sasl.username		SASL user name
-#sasl.password		SASL user password
-#sasl.mechanism		SASL mechanism can be plain, scram-sha512, scram-sha256
-    ports:
-      - "9308:9308"
-#    networks:
-#     - services
-    #mem_limit: 128m
-    #mem_reservation: 64m
-    logging:
-        driver: "json-file"
-        options:
-          max-size: "5m"
+# version: "3.9"
+# services:
+# ### Kafka Exporter #########################################
+#   kafka-exporter:
+#     container_name: kafka-exporter
+#     image: danielqsj/kafka-exporter
+#     restart: unless-stopped
+#     depends_on:
+#       - kafka
+#
+#     #command: ["--kafka.server=mq:9092"]
+#     command: ["--kafka.server=192.168.0.4:29092",  "--sasl.enabled", "--sasl.username=admin", "--sasl.password=admin-secret", "--sasl.mechanism=plain"]
+#
+# #sasl.enabled	false	Connect using SASL/PLAIN
+# #sasl.handshake	true	Only set this to false if using a non-Kafka SASL proxy
+# #sasl.username		SASL user name
+# #sasl.password		SASL user password
+# #sasl.mechanism		SASL mechanism can be plain, scram-sha512, scram-sha256
+#     ports:
+#       - "9308:9308"
+# #    networks:
+# #     - services
+#     #mem_limit: 128m
+#     #mem_reservation: 64m
+#     logging:
+#         driver: "json-file"
+#         options:
+#           max-size: "5m"
   kafka-ui:
     image: provectuslabs/kafka-ui
     container_name: kafka-ui
