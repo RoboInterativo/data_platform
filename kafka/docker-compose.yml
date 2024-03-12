@@ -9,7 +9,7 @@ services:
 #       - kafka
 #
 #     #command: ["--kafka.server=mq:9092"]
-#     command: ["--kafka.server=192.168.0.4:29092",  "--sasl.enabled", "--sasl.username=admin", "--sasl.password=admin-secret", "--sasl.mechanism=plain"]
+#     command: ["--kafka.server=188.120.243.218:29092",  "--sasl.enabled", "--sasl.username=admin", "--sasl.password=admin-secret", "--sasl.mechanism=plain"]
 #
 # #sasl.enabled	false	Connect using SASL/PLAIN
 # #sasl.handshake	true	Only set this to false if using a non-Kafka SASL proxy
@@ -34,10 +34,10 @@ services:
     restart: always
     environment:
       #- KAFKA_CLUSTERS_0_NAME=local
-      #- KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=192.168.0.4:29092
-      #- KAFKA_CLUSTERS_0_ZOOKEEPER=192.168.0.4:22181
+      #- KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=188.120.243.218:29092
+      #- KAFKA_CLUSTERS_0_ZOOKEEPER=188.120.243.218:22181
       KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 192.168.0.4:29092
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: 188.120.243.218:29092
       KAFKA_CLUSTERS_0_PROPERTIES_SECURITY_PROTOCOL: SASL_PLAINTEXT
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_MECHANISM: PLAIN
       KAFKA_CLUSTERS_0_PROPERTIES_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";'
@@ -58,7 +58,7 @@ services:
       - /data/kafka/files/:/opt/files
       - /data/zookeeper/data:/var/lib/zookeeper/data
 
-#192.168.0.4
+#188.120.243.218
   kafka:
     image: confluentinc/cp-kafka:latest
     depends_on:
@@ -69,14 +69,14 @@ services:
     hostname: kafka
     environment:
       KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: 192.168.0.4:22181
+      KAFKA_ZOOKEEPER_CONNECT: 188.120.243.218:22181
       ZOOKEEPER_SASL_ENABLED: "false"
       #KAFKA_OPTS: "-javaagent:/opt/jmx/jmx_prometheus_javaagent-0.12.0.jar=9141:/opt/jmx/kafka-2_0_0.yml"
       #ADD SASL
       #KAFKA_SASL_ENABLED_MECHANISMS: "SCRAM-SHA-256,SCRAM-SHA-512"
       KAFKA_LISTENERS: SASL_PLAINTEXT://0.0.0.0:29092
       #,BROKER://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://192.168.0.4:29092
+      KAFKA_ADVERTISED_LISTENERS: SASL_PLAINTEXT://188.120.243.218:29092
       #,BROKER://kafka:9092
       #KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,BROKER:PLAINTEXT
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: SASL_PLAINTEXT:SASL_PLAINTEXT
