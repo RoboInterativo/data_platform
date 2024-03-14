@@ -8,4 +8,4 @@ docker   run -p 8083:8083 \
   -e OFFSET_STORAGE_TOPIC=my_connect_offsets \
   -e STATUS_STORAGE_TOPIC=my_connect_statuses  -itd --restart
 #  --add-host t-gp-cdc-db-1.dellin.local:10.214.66.156 \
-  -e KAFKA_OPTS="-Djava.security.auth.login.config=path/to/jaas.conf" \
+  # -e KAFKA_OPTS="-Djava.security.auth.login.config=path/to/jaas.conf" \
