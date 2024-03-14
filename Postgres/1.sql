@@ -9,3 +9,7 @@ CREATE TABLE accounts (
 
 INSERT INTO accounts(user_id,username,password,created_at,last_login)  VALUES
  (accounts(1,'username','password',NULL,NULL);
+
+
+ CREATE PUBLICATION dbz_publication
+ FOR TABLE accounts;
