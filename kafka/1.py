@@ -8,7 +8,7 @@ import hashlib
 # Initialize the Kafka producer with SASL_SSL authentication
 
 p = Producer({
-    'bootstrap.servers': '10.182.19.20:29092',
+    'bootstrap.servers': '172.17.0.1:29092',
     'sasl.mechanisms': 'PLAIN',
     'security.protocol': 'SASL_PLAINTEXT',
     'sasl.username': 'admin',
