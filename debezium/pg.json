@@ -11,7 +11,7 @@
         "database.server.name": "172.17.0.1",
         "plugin.name": "pgoutput",
         "table.include.list": "public.fact_cost",
-        "publication.name": "dbz_publication2",
+        "slot.name" : "debezium",
         "poll.interval.ms": "1000",
         "heartbeat.action.query": "INSERT INTO debezium_info.heartbeat (date_load) VALUES (NOW());",
         "heartbeat.writeback.enabled": "true",
