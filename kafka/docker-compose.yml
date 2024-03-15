@@ -69,6 +69,7 @@ services:
     hostname: kafka
     environment:
       KAFKA_BROKER_ID: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
       KAFKA_ZOOKEEPER_CONNECT: 172.17.0.1:22181
       ZOOKEEPER_SASL_ENABLED: "false"
       #KAFKA_OPTS: "-javaagent:/opt/jmx/jmx_prometheus_javaagent-0.12.0.jar=9141:/opt/jmx/kafka-2_0_0.yml"
