@@ -60,7 +60,7 @@ services:
 
 #172.17.0.1
   kafka:
-    image: confluentinc/cp-kafka:latest
+    image: confluentinc/cp-kafka:7.2.0
     depends_on:
       - zookeeper
     ports:
