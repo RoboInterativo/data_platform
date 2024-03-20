@@ -105,7 +105,31 @@ services:
       #- ./files:/opt/jmx
       - /data/kafka/files/:/opt/files
       - /data/kafka/data:/var/lib/kafka/data
-    # networks:
-    #   - confluent
+  schema-registry:
+    image: nexus.bia-tech.ru/confluentinc/cp-schema-registry:7.2.0
+#5.5.3
+    environment:
+#      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 10.182.19.20:22181
+      SCHEMA_REGISTRY_HOST_NAME: 172.17.0.1
+      SCHEMA_REGISTRY_LISTENERS: http://172.17.0.1:8081,http://localhost:8081
+     # SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 172.17.0.1:29092
+     # SCHEMA_REGISTRY_LOG4J_ROOT_LOGLEVEL: WARN
+      # SCHEMA_REGISTRY_KAFKASTORE_SECURITY_PROTOCOL: SASL_PLAINTEXT
+      # SCHEMA_REGISTRY_KAFKASTORE_SASL_JAAS_CONFIG: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="a>
+
+      # SCHEMA_REGISTRY_KAFKASTORE_SASL_MECHANISM: PLAIN
+
+# schemaRegistryOpts "-Djava.security.auth.login.config=/etc/kafka-config/kafka_client_jaas.conf"
+#      SCHEMA_REGISTRY_OPTS: "-Djava.security.auth.login.config=/opt/data/jaas.conf"
+#      SCHEMA_REGISTRY_KAFKA_OPTS: "-Djava.security.auth.login.config=/opt/data/jaas.conf"
+#      - ZOOKEEPER_SASL_ENABLED="false"
+
+    ports:
+      - 8081:8081
+    volumes:
+      - /data/shema/data:/opt/data
+# networks:
+#   - confluent
 #jmx_prometheus_javaagent-0.12.0.jar
 #kafka-2_0_0.yml
