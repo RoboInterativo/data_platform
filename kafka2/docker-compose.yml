@@ -106,7 +106,7 @@ services:
       - /data/kafka/files/:/opt/files
       - /data/kafka/data:/var/lib/kafka/data
   schema-registry:
-    image: nexus.bia-tech.ru/confluentinc/cp-schema-registry:7.2.0
+    image: confluentinc/cp-schema-registry:7.2.0
 #5.5.3
     environment:
 #      SCHEMA_REGISTRY_KAFKASTORE_CONNECTION_URL: 10.182.19.20:22181
