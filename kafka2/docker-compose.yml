@@ -100,7 +100,7 @@ services:
       #KAFKA_INTER_BROKER_LISTENER_NAME: BROKER
 
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
+      # KAFKA_AUTO_CREATE_TOPICS_ENABLE: "true"
     volumes:
       #- ./files:/opt/jmx
       - /data/kafka/files/:/opt/files
