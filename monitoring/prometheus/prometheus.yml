@@ -1,0 +1,26 @@
+# my global config
+global:
+  scrape_interval:     15s # Global acquisition interval, default 1 m, set to 15s
+  evaluation_interval: 15s # Global rule trigger interval, default 1 m, set 15s here
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      # - alertmanager:9093
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: 'DORIS_CLUSTER' # Each Doris cluster, we call it a job. Job can be given a name here as the name of Doris cluster in the monitoring system.
+    metrics_path: '/metrics' # Here you specify the restful API to get the monitors. With host: port in the following targets, Prometheus will eventually collect monitoring items through host: port/metrics_path.
+    static_configs: # Here we begin to configure the target addresses of FE and BE, respectively. All FE and BE are written into their respective groups.
+      - targets: ['10.214.214.20:8030']
+        labels:
+          group: fe # Here configure the group of fe, which contains three Frontends
+
+      - targets: ['10.214.214.21:8040']
+        labels:
+          group: be # Here configure the group of be, which contains three Backends
