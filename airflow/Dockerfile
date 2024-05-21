@@ -2,11 +2,12 @@ FROM apache/airflow:2.8.1
 #ENV PIP_INDEX_URL https://hdp-nx3.dellin.ru/repository/pipy-public/simple/
 
 USER root
+COPY microsoft.asc /tmp/microsoft.asc
 # Add bia-tech.ru repository
 RUN cat /etc/apt/sources.list.d/debian.sources
 RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
 RUN ls /etc/apt/sources.list.d
-RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+RUN /tmp/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
 
 #debian.sources mariadb.list mssql-release.list pgdg.list
 
