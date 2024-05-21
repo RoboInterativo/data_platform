@@ -43,13 +43,13 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y install krb5-locales libkrb5-3 libapache2-mod-auth-gssapi
 
 
-COPY microsoft.asc /tmp/microsoft.asc
+#COPY microsoft.asc /tmp/microsoft.asc
 # Add bia-tech.ru repository
 RUN cat /etc/apt/sources.list.d/debian.sources
 RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
 RUN ls /etc/apt/sources.list.d
-RUN cat /tmp/microsoft.asc |  gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
-
+#RUN cat /tmp/microsoft.asc |  gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+COPY microsoft-prod.gpg /usr/share/keyrings/microsoft-prod.gpg
 
 
 # Install config for Kerberos
