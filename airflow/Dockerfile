@@ -36,7 +36,7 @@ USER root
 # Install dependencies
 RUN apt-get update
 
-RUN apt-get upgrade -y
+RUN ACCEPT_EULA=Y apt-get upgrade -y
 RUN apt-get -y install curl gnupg wget
 # Install Kerberos
 ENV DEBIAN_FRONTEND=noninteractive
