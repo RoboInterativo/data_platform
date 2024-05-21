@@ -7,7 +7,7 @@ COPY microsoft.asc /tmp/microsoft.asc
 RUN cat /etc/apt/sources.list.d/debian.sources
 RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
 RUN ls /etc/apt/sources.list.d
-RUN /tmp/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+RUN cat /tmp/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
 
 #debian.sources mariadb.list mssql-release.list pgdg.list
 
