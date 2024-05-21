@@ -1,4 +1,4 @@
-FROM airflow:2.8.1
+FROM apache/airflow:2.8.1
 #ENV PIP_INDEX_URL https://hdp-nx3.dellin.ru/repository/pipy-public/simple/
 
 USER root
