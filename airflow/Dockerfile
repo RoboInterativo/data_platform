@@ -1,13 +1,16 @@
-FROM nexus.bia-tech.ru/apache/airflow:2.8.1
+FROM airflow:2.8.1
 #ENV PIP_INDEX_URL https://hdp-nx3.dellin.ru/repository/pipy-public/simple/
 
 USER root
 # Add bia-tech.ru repository
 RUN cat /etc/apt/sources.list.d/debian.sources
+RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
 RUN ls /etc/apt/sources.list.d
+RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+
 #debian.sources mariadb.list mssql-release.list pgdg.list
 
-RUN rm  /etc/apt/sources.list.d/* -f
+# RUN rm  /etc/apt/sources.list.d/* -f
 # RUN echo "Types: deb \n\
 # URIs: http://nexus.bia-tech.ru/repository/debian-bookworm \n\
 # Suites: bookworm bookworm-updates  \n\
