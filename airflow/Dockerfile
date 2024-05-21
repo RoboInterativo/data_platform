@@ -2,12 +2,6 @@ FROM apache/airflow:2.8.1
 #ENV PIP_INDEX_URL https://hdp-nx3.dellin.ru/repository/pipy-public/simple/
 
 USER root
-COPY microsoft.asc /tmp/microsoft.asc
-# Add bia-tech.ru repository
-RUN cat /etc/apt/sources.list.d/debian.sources
-RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
-RUN ls /etc/apt/sources.list.d
-RUN cat /tmp/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
 
 #debian.sources mariadb.list mssql-release.list pgdg.list
 
@@ -47,6 +41,16 @@ RUN apt-get -y install curl gnupg wget
 # Install Kerberos
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get -y install krb5-locales libkrb5-3 libapache2-mod-auth-gssapi
+
+
+COPY microsoft.asc /tmp/microsoft.asc
+# Add bia-tech.ru repository
+RUN cat /etc/apt/sources.list.d/debian.sources
+RUN echo "deb [arch=amd64,armhf,arm64] https://packages.microsoft.com/ubuntu/22.04/mssql-server-2022 jammy main" >>/etc/apt/sources.list.d/debian.sources
+RUN ls /etc/apt/sources.list.d
+RUN cat /tmp/microsoft.asc | sudo gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg
+
+
 
 # Install config for Kerberos
 RUN apt-get -y -qq install krb5-config krb5-user
