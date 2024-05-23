@@ -21,6 +21,7 @@ services:
      - MSSQL_PID=Standard
      - SA_PASSWORD=Password!
      - MSSQL_AGENT_ENABLED=true
+     #
 
   postgres:
     container_name: postgres
