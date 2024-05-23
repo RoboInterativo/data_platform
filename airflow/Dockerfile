@@ -109,3 +109,5 @@ COPY ./test_connect.py ./
 #ENV PATH=$PATH:/usr/src/home/cdc_user/.local/bin
 
 RUN python3 -m pip install --root-user-action=ignore -r ./requirements.txt
+
+RUN python3 -m pip install --root-user-action=ignore apache-airflow-providers-microsoft-mssql
