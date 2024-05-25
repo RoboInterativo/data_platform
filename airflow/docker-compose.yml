@@ -25,6 +25,7 @@ services:
      - MSSQL_AGENT_ENABLED=true
     volumes:
       - /data:/data
+      - ./scripts:/opt/scripts
      #
 
   postgres:
