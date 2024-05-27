@@ -19,8 +19,7 @@ connection_lnk_pyodbc = f"DRIVER={driver_config};" \
                                                f"DATABASE={database['name']};" \
                                                f"APP=CDC Connector;" \
                                                f"Encrypt=yes;" \
-                                               f"TrustServerCertificate=yes;" \
-                                               f"Authentication=ActiveDirectoryIntegrated;" \
+                                               f"TrustServerCertificate=yes;" \                                    
                                                f"PWD={database['password']};" \
                                                f"UID={database['user']}"
 # connection_lnk_pyodbc = f"DRIVER={driver_config};" \
