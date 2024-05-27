@@ -1,5 +1,5 @@
 export PATH=$PATH:/opt/mssql-tools/bin
-sqlcmd -S localhost -U SA -P Password! \
+sqlcmd -S localhost -U SA -P exb02102! \
 -Q """RESTORE DATABASE AdventureWorksDW2022
 FROM DISK = '/data/AdventureWorksDW2022.bak'
 WITH MOVE 'AdventureWorksDW2022' TO '/data/AdventureWorksDW2022.mdf',
