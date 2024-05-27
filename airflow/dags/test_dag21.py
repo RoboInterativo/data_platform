@@ -69,7 +69,7 @@ with DAG('test_connect', start_date=days_ago(1), schedule_interval='@daily') as 
     #parameters={"id": max_id},
     conn_avail = BashOperator(
         task_id="get_connection",
-        bash_command='airflow connections get my_prod_db3 -o json',
+        bash_command='airflow connections get my_prod_db -o json',
     )
     get_tables = PythonOperator(
                 task_id="get_tables", python_callable=use_hook
