@@ -50,6 +50,25 @@ def use_hook( **kwargs):
     row = cursor.fetchall()
     for item in row:
         print (item[0])
+def use_hook2( **kwargs):
+    # Получаем параметры задачи
+    # ti = kwargs['ti']
+    # max_id = ti.xcom_pull(task_ids='get_max_id')
+    # Создаем соединение с источником данных
+    source_conn_id = "my_prod_db2"
+    source_hook =  OdbcHook( source_conn_id)
+    print(source_hook)
+    #MsSqlHook
+    # Выполняем запрос для получhook_params={"schema":"estaff_cut"}ения новых записей
+
+    new_records_query = f"SELECT  * FROM   SYSOBJECTS WHERE   xtype = 'U';"
+    #records = source_hook.return_single_query_results(new_records_query,parameters=None)
+    cnxn = source_hook.get_conn()
+    cursor = cnxn.cursor()
+    cursor.execute(new_records_query)
+    row = cursor.fetchall()
+    for item in row:
+        print (item[0])
     # get_records(new_records_query)
     # Вставляем новые записи в целевую таблицу
     # target_conn_id = "target_db"
@@ -73,6 +92,13 @@ with DAG('test_connect', start_date=days_ago(1), schedule_interval='@daily') as 
     )
     get_tables = PythonOperator(
                 task_id="get_tables", python_callable=use_hook
+    )
+    conn_avail2 = BashOperator(
+            task_id="get_connection",
+            bash_command='airflow connections get my_prod_d2 -o json',
+        )
+    get_tables2 = PythonOperator(
+                    task_id="get_tables2", python_callable=use_hook2
     )
 
     (
