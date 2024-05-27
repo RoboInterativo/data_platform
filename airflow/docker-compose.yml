@@ -27,7 +27,8 @@ services:
       - /data:/data
       - ./scripts:/opt/scripts
      #
-
+    networks:
+      - hbase
   postgres:
     container_name: postgres
     image: postgres:12-alpine
