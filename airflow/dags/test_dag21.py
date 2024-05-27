@@ -10,6 +10,7 @@ from airflow.providers.odbc.hooks.odbc import OdbcHook
 from airflow.models.connection import Connection
 import logging
 from airflow.models import Variable
+from airflow.operators.bash import BashOperator
 
 
 logger = logging.getLogger(__name__)
