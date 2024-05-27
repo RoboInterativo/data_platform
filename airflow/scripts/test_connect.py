@@ -8,7 +8,7 @@ database={
 "pyodbc.config": "ODBC Driver 17 for SQL Server",
 "hostname": "sqlserver",
 "port": "1433",
-"user": "SA",
+"user": "test",
 "password": "exb021205!"}
 
 
