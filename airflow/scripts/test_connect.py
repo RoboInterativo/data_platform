@@ -18,7 +18,7 @@ connection_lnk_pyodbc = f"DRIVER={driver_config};" \
                                                f"SERVER={database['hostname']};" \
                                                f"DATABASE={database['name']};" \
                                                f"PWD={database['password']}"; \
-                                               f"UID={database['user']}"
+                                               "UID=SA"
 # connection_lnk_pyodbc = f"DRIVER={driver_config};" \
 #                                                f"SERVER={database['hostname']};" \
 #                                                f"DATABASE={database['name']};" \
