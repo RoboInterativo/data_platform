@@ -17,9 +17,6 @@ driver_config = database.get("pyodbc.config")
 connection_lnk_pyodbc = f"DRIVER={driver_config};" \
                                                f"SERVER={database['hostname']};" \
                                                f"DATABASE={database['name']};" \
-                                               f"APP=CDC Connector;" \
-                                               f"Encrypt=yes;" \
-                                               f"TrustServerCertificate=yes;" \
                                                f"PWD={database['password']}"; \
                                                f"UID={database['user']}"
 # connection_lnk_pyodbc = f"DRIVER={driver_config};" \
