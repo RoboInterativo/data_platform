@@ -3,16 +3,17 @@ import pyodbc
 DEFAULT_DRIVER = "pyodbc"
 DEFAULT_ODBC_DRIVER = "ODBC Driver 17 for SQL Server"
 database={
-"name": "estaff_cut",
+"name": "test",
 "mssql.driver": "pyodbc",
 "pyodbc.config": "ODBC Driver 17 for SQL Server",
-"hostname": "t-estaff-dl.dellin.local",
+"hostname": "sqlserver",
 "port": "1433",
-"user": "dellin\\ashilo",
-"password": "eXB4021205Bia$"}
+"user": "SA",
+"password": "Password!"}
 
 
 driver_config = database.get("pyodbc.config")
+#UID={USERNAME};PWD={PASSWORD}'
 connection_lnk_pyodbc = f"DRIVER={driver_config};" \
                                                f"SERVER={database['hostname']};" \
                                                f"DATABASE={database['name']};" \
@@ -20,8 +21,17 @@ connection_lnk_pyodbc = f"DRIVER={driver_config};" \
                                                f"Encrypt=yes;" \
                                                f"TrustServerCertificate=yes;" \
                                                f"Authentication=ActiveDirectoryIntegrated;" \
+                                               f"PWD={database['password']};" \
                                                f"UID={database['user']}"
-
+# connection_lnk_pyodbc = f"DRIVER={driver_config};" \
+#                                                f"SERVER={database['hostname']};" \
+#                                                f"DATABASE={database['name']};" \
+#                                                f"APP=CDC Connector;" \
+#                                                f"Encrypt=yes;" \
+#                                                f"TrustServerCertificate=yes;" \
+#                                                f"Authentication=ActiveDirectoryIntegrated;" \
+#                                                f"UID={database['user']}"
+#
 
 engine = pyodbc.connect(connection_lnk_pyodbc, autocommit=True)
 
