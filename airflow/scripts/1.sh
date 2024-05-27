@@ -1,0 +1,1 @@
+SELECT   * FROM   SYSOBJECTS WHERE   xtype = 'U';
