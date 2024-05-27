@@ -9,7 +9,7 @@ database={
 "hostname": "sqlserver",
 "port": "1433",
 "user": "SA",
-"password": "Password!"}
+"password": "exb021205!"}
 
 
 driver_config = database.get("pyodbc.config")
