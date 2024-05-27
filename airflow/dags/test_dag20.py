@@ -63,7 +63,7 @@ def use_hook( **kwargs):
     print(source_hook)
     #MsSqlHook
     # Выполняем запрос для получhook_params={"schema":"estaff_cut"}ения новых записей
-    new_records_query = f"SELECT COUNT (*)  FROM dbo.events;"
+    new_records_query = f"SELECT COUNT (*)  FROM DimOrganization;"
     #records = source_hook.return_single_query_results(new_records_query,parameters=None)
     cnxn = source_hook.get_conn()
     cursor = cnxn.cursor()
