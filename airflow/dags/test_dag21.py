@@ -49,7 +49,7 @@ def use_hook( **kwargs):
     cursor.execute(new_records_query)
     row = cursor.fetchall()
     for item in row:
-        print (row[0])
+        print (item[0])
     # get_records(new_records_query)
     # Вставляем новые записи в целевую таблицу
     # target_conn_id = "target_db"
