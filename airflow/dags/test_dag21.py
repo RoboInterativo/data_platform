@@ -94,8 +94,8 @@ with DAG('test_connect', start_date=days_ago(1), schedule_interval='@daily') as 
                 task_id="get_tables", python_callable=use_hook
     )
     conn_avail2 = BashOperator(
-            task_id="get_connection",
-            bash_command='airflow connections get my_prod_d2 -o json',
+            task_id="get_connection2",
+            bash_command='airflow connections get my_prod_db2 -o json',
         )
     get_tables2 = PythonOperator(
                     task_id="get_tables2", python_callable=use_hook2
