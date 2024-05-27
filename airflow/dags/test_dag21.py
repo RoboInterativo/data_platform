@@ -41,12 +41,13 @@ def use_hook( **kwargs):
     print(source_hook)
     #MsSqlHook
     # Выполняем запрос для получhook_params={"schema":"estaff_cut"}ения новых записей
-    new_records_query = f"SELECT COUNT (*)  FROM DimOrganization;"
+
+    new_records_query = f"SELECT  * FROM   SYSOBJECTS WHERE   xtype = 'U';"
     #records = source_hook.return_single_query_results(new_records_query,parameters=None)
     cnxn = source_hook.get_conn()
     cursor = cnxn.cursor()
     cursor.execute(new_records_query)
-    row = cursor.fetchone()
+    row = cursor.fetchall()
     print (row)
     # get_records(new_records_query)
     # Вставляем новые записи в целевую таблицу
@@ -68,6 +69,9 @@ with DAG('test_connect', start_date=days_ago(1), schedule_interval='@daily') as 
     conn_avail = BashOperator(
         task_id="get_connection",
         bash_command='airflow connections get my_prod_db3 -o json',
+    )
+    get_tables = PythonOperator(
+                task_id="get_tables", python_callable=use_hook
     )
 
     (
