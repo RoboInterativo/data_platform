@@ -55,7 +55,7 @@ def use_hook( **kwargs):
     #     target_hook.run(f"INSERT INTO target_table VALUES ({','.join(['?'] * len(record))})", record)
     #return row
 
-with DAG('TEST', start_date=days_ago(1), schedule_interval='@daily') as dag:
+with DAG('test_connect', start_date=days_ago(1), schedule_interval='@daily') as dag:
 
     # get_all_countries = MsSqlOperator(
     #         task_id="get_max_id",
