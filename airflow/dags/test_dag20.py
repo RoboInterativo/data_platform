@@ -70,6 +70,27 @@ def use_hook( **kwargs):
     cursor.execute(new_records_query)
     row = cursor.fetchone()
     print (row)
+
+def create_table( **kwargs):
+    # Получаем параметры задачи
+    # ti = kwargs['ti']
+    # max_id = ti.xcom_pull(task_ids='get_max_id')
+    # Создаем соединение с источником данных
+    source_conn_id = "my_prod_db"
+    source_hook =  OdbcHook( source_conn_id)
+
+    dest_conn_id = "my_prod_db2"
+    dest_hook =  OdbcHook( source_dest_id)
+    # print(source_hook)
+    # #MsSqlHook
+    # # Выполняем запрос для получhook_params={"schema":"estaff_cut"}ения новых записей
+    # new_records_query = f"SELECT COUNT (*)  FROM DimOrganization;"
+    # #records = source_hook.return_single_query_results(new_records_query,parameters=None)
+    # cnxn = source_hook.get_conn()
+    # cursor = cnxn.cursor()
+    # cursor.execute(new_records_query)
+    # row = cursor.fetchone()
+    # print (row)
     # get_records(new_records_query)
     # Вставляем новые записи в целевую таблицу
     # target_conn_id = "target_db"
