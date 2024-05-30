@@ -15,19 +15,19 @@ x-environment: &airflow_environment
 x-airflow-image: &airflow_image apache/airflow:2.0.0-python3.8
 # ====================================== /AIRFLOW ENVIRONMENT VARIABLES ======================================
 services:
-  dashboard:
-    container_name: dashboard
-    image: 89.23.103.251:5000/python:3.11-slim
-    restart: always
-    environment:
-      - POSTGRES_USER=airflow
-      - POSTGRES_PASSWORD=airflow
-      - POSTGRES_DB=dashboard
-      - HOME=/opt/dashboard/etl_dashboard
-    volumes:
-        - ../dashboard:/opt/dashboard
-    #command: "/opt/dashboard/run.sh"
-    command: tail -f /dev/null
+  # dashboard:
+  #   container_name: dashboard
+  #   image: 89.23.103.251:5000/python:3.11-slim
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=airflow
+  #     - POSTGRES_PASSWORD=airflow
+  #     - POSTGRES_DB=dashboard
+  #     - HOME=/opt/dashboard/etl_dashboard
+  #   volumes:
+  #       - ../dashboard:/opt/dashboard
+  #   #command: "/opt/dashboard/run.sh"
+  #   command: tail -f /dev/null
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
