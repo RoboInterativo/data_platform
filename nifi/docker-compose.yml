@@ -19,8 +19,8 @@ services:
 
     environment:
       ACCEPT_EULA: 'Y'
-      MSSQL_SA_PASSWORD: 'Passw0rd'
-      MSSQL_SA_PASSWORD
+      MSSQL_SA_PASSWORD: 'Password'
+
       MSSQL_DATA_DIR: /var/opt/mssql/dat
       MSSQL_PID: 'Developer'
       MSSQL_TCP_PORT: 1433
