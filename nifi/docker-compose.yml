@@ -32,8 +32,12 @@ services:
       - /var/data/mssql:/var/opt/mssql/data
       - /var/data/mssql-log:/var/opt/mssql/log
       - /var/data/mssql-secrets:/var/opt/mssql/secrets
-#      /opt/mssql-tools18/bin/sqlcmd -S 127.0.0.1 -U SA -P 'Passw0rd' -C
+#jdbc:sqlserver://;servername=mssql-db;port=1433;database=mydb;authentication=NotSpecified;
+#encrypt=true;
+#integratedSecurity=true;
 
+#      /opt/mssql-tools18/bin/sqlcmd -S 127.0.0.1 -U SA -P 'Passw0rd' -C
+#/opt/nifi/nifi-current$ ./nifi.sh set-single-user-credentials admin Exb021205Nifi!
 #    network_mode: "host"
 #    environment:
 #       NIFI_WEB_HTTP_HOST: "http://185.146.157.69"
