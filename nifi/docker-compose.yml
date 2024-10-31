@@ -12,14 +12,14 @@ services:
     ports:
       - "0.0.0.0:8443:8443" # Unsecured HTTP Web Port
       - "0.0.0.0:8080:8080"
-
+    volumes:
+      - /opt/nifi/drivers:/opt/nifi/drivers
   mssql:
     container_name: mssql-db
     hostname: mssql-db
     image: mcr.microsoft.com/mssql/server:2022-latest
       #  nexus.bia-tech.ru/mssql/server:2022-latest
-    volumes:
-      - /opt/nifi/drivers:/opt/nifi/drivers
+
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: 'Passw0rd'
