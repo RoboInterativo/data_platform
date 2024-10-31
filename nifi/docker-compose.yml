@@ -18,7 +18,8 @@ services:
     hostname: mssql-db
     image: mcr.microsoft.com/mssql/server:2022-latest
       #  nexus.bia-tech.ru/mssql/server:2022-latest
-
+    volumes:
+      - /opt/nifi/drivers:/opt/nifi/drivers
     environment:
       ACCEPT_EULA: 'Y'
       MSSQL_SA_PASSWORD: 'Passw0rd'
