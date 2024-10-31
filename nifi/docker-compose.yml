@@ -7,7 +7,7 @@ services:
 #    environment:
 #      - ALLOW_ANONYMOUS_LOGIN=yes
   nifi:
-    hostname: 185.146.157.69
+    hostname: nifi.geekslore.ru
     image: apache/nifi:latest
     ports:
       - "0.0.0.0:8443:8443" # Unsecured HTTP Web Port
