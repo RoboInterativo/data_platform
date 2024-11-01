@@ -1,26 +1,19 @@
 version: "3"
 services:
 
-  # nifi:
-  #   hostname: nifi.geekslore.ru
-  #   image: apache/nifi:latest
-  #   ports:
-      # - "0.0.0.0:8443:8443" # Unsecured HTTP Web Port
-  #     - "0.0.0.0:8080:8080"
-  #   volumes:
-  #     - /opt/nifi/drivers:/opt/nifi/drivers
 
-   zookeeper:
+
+  zookeeper:
         hostname: myzookeeper
         container_name: zookeeper_container_persistent
         image: 'bitnami/zookeeper:3.7.0'  # latest image as of 2021-11-09.
         restart: on-failure
         environment:
             - ALLOW_ANONYMOUS_LOGIN=yes
-        networks:
-            - my_persistent_network
+        # networks:
+        #     - my_persistent_network
 # version control for nifi flows
-    registry:
+  registry:
 
         hostname: myregistry
         container_name: registry
