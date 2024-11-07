@@ -15,7 +15,7 @@ keytool -keystore kafka.client.keystore.jks -alias localhost -validity 365 -genk
 
 keytool -keystore kafka.client.keystore.jks -alias localhost -certreq -file cert-file
 
-openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:<password>
+openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:12345678
 
 keytool -keystore kafka.client.keystore.jks -alias CARoot -import -file ca-cert
 
