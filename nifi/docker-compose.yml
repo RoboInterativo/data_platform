@@ -79,7 +79,7 @@ services:
 
       MSSQL_DATA_DIR: /var/opt/mssql/dat
       MSSQL_PID: 'Developer'
-      MSSQL_TCP_PORT: 1433
+      MSSQL_TCP_PORT: 1433jdbc:sqlserver://;servername=mssql-db;port=1433;database=mydb;authentication=NotSpecified;
     ports:
       - "1433:1433"
     volumes:

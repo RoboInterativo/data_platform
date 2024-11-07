@@ -1,0 +1,120 @@
+version: '3'
+
+services:
+
+  kafka1:
+      restart: unless-stopped
+      image: bitnami/kafka:3.5.1
+      hostname: u-p-bi-kafka-1
+      container_name: kafka1
+      # ports:
+      #   - "39092:39092"
+      environment:
+        - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+        - KAFKA_CFG_NODE_ID=1
+        - KAFKA_CFG_PROCESS_ROLES=controller,broker
+        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@u-p-bi-kafka-1:9093,2@u-p-bi-kafka-2:9093,3@u-p-bi-kafka-3.srv:9093
+        - KAFKA_CFG_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092,CONTROLLER://:9093
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_SSL:SASL_SSL,EXTERNAL:SASL_SSL
+        - KAFKA_CFG_ADVERTISED_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092
+        - KAFKA_CLIENT_USERS=admin
+        - KAFKA_CLIENT_PASSWORDS=admin
+        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+        - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+        - KAFKA_CONTROLLER_USER=controller_user
+        - KAFKA_CONTROLLER_PASSWORD=controller_password
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_SSL
+        - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+        - KAFKA_INTER_BROKER_USER=controller_user
+        - KAFKA_INTER_BROKER_PASSWORD=controller_password
+        - KAFKA_CERTIFICATE_PASSWORD=12345678
+        - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+        - KAFKA_TLS_TYPE=JKS
+        - KAFKA_HEAP_OPTS=-Xmx2048m -Xms2048m
+        - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
+        - JMX_PORT=9997
+
+
+      volumes:
+        - '/var/lib/kafka:/bitnami/kafka'
+        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+      user: "0"
+      # network_mode: "host"
+  kafka2:
+      restart: unless-stopped
+      image: bitnami/kafka:3.5.1
+      hostname: u-p-bi-kafka-2
+      container_name: kafka2
+      # ports:
+      #   - "39092:39092"
+      environment:
+        - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+        - KAFKA_CFG_NODE_ID=2
+        - KAFKA_CFG_PROCESS_ROLES=controller,broker
+        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@u-p-bi-kafka-1:9093,2@u-p-bi-kafka-2:9093,3@u-p-bi-kafka-3.srv:9093
+        - KAFKA_CFG_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092,CONTROLLER://:9093
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_SSL:SASL_SSL,EXTERNAL:SASL_SSL
+        - KAFKA_CFG_ADVERTISED_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092
+        - KAFKA_CLIENT_USERS=admin
+        - KAFKA_CLIENT_PASSWORDS=admin
+        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+        - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+        - KAFKA_CONTROLLER_USER=controller_user
+        - KAFKA_CONTROLLER_PASSWORD=controller_password
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_SSL
+        - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+        - KAFKA_INTER_BROKER_USER=controller_user
+        - KAFKA_INTER_BROKER_PASSWORD=controller_password
+        - KAFKA_CERTIFICATE_PASSWORD=12345678
+        - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+        - KAFKA_TLS_TYPE=JKS
+        - KAFKA_HEAP_OPTS=-Xmx2048m -Xms2048m
+        - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
+        - JMX_PORT=9997
+
+
+      volumes:
+        - '/var/lib/kafka2:/bitnami/kafka'
+        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+      user: "0"
+
+  kafka3:
+      restart: unless-stopped
+      image: bitnami/kafka:3.5.1
+      hostname: u-p-bi-kafka-3
+      container_name: kafka3
+      # ports:
+      #   - "39092:39092"
+      environment:
+        - KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM=
+        - KAFKA_CFG_NODE_ID=2
+        - KAFKA_CFG_PROCESS_ROLES=controller,broker
+        - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@u-p-bi-kafka-1:9093,2@u-p-bi-kafka-2:9093,3@u-p-bi-kafka-3.srv:9093
+        - KAFKA_CFG_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092,CONTROLLER://:9093
+        - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=CONTROLLER:SASL_PLAINTEXT,SASL_SSL:SASL_SSL,EXTERNAL:SASL_SSL
+        - KAFKA_CFG_ADVERTISED_LISTENERS=SASL_SSL://:19092,EXTERNAL://:39092
+        - KAFKA_CLIENT_USERS=admin
+        - KAFKA_CLIENT_PASSWORDS=admin
+        - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
+        - KAFKA_CFG_SASL_MECHANISM_CONTROLLER_PROTOCOL=PLAIN
+        - KAFKA_CONTROLLER_USER=controller_user
+        - KAFKA_CONTROLLER_PASSWORD=controller_password
+        - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=SASL_SSL
+        - KAFKA_CFG_SASL_MECHANISM_INTER_BROKER_PROTOCOL=PLAIN
+        - KAFKA_INTER_BROKER_USER=controller_user
+        - KAFKA_INTER_BROKER_PASSWORD=controller_password
+        - KAFKA_CERTIFICATE_PASSWORD=12345678
+        - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
+        - KAFKA_TLS_TYPE=JKS
+        - KAFKA_HEAP_OPTS=-Xmx2048m -Xms2048m
+        - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
+        - JMX_PORT=9997
+
+
+      volumes:
+        - '/var/lib/kafka3:/bitnami/kafka'
+        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+      user: "0"
