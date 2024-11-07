@@ -37,8 +37,9 @@ services:
 
       volumes:
         - '/var/lib/kafka:/bitnami/kafka'
-        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+        - './certs/kafka.server.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.server.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+
       user: "0"
       # network_mode: "host"
   kafka2:
@@ -76,8 +77,9 @@ services:
 
       volumes:
         - '/var/lib/kafka2:/bitnami/kafka'
-        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+        - './certs/kafka.server.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.server.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+
       user: "0"
 
   kafka3:
@@ -115,6 +117,6 @@ services:
 
       volumes:
         - '/var/lib/kafka3:/bitnami/kafka'
-        - './certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - './certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+        - './certs/kafka.server.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+        - './certs/kafka.server.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
       user: "0"
