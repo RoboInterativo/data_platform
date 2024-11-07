@@ -1,7 +1,7 @@
 #https://help.hcl-software.com/unica/Journey/en/12.1.0/Journey/AdminGuide/Configuration_of_kafka_on_SSL.html
 
   #  To deploy SSL, generate the key and the certificate for each machine in the cluster. Generate the key into a temporary keystore initially so that you can export and sign it later with CA.
-keytool -keystore kafka.server.keystore.jks -alias localhost -validity 365 -genkey
+keytool -keyalg RSA -keystore kafka.server.keystore.jks -alias localhost -validity 365 -genkey
 #  #      keystore: The keystore file that stores the certificate. The keystore file contains the private key of the certificate; therefore, it needs to be kept safely.
 #        validity: The valid time of the certificate in days.
 #    Create your own CA (certificate authority)
