@@ -1,4 +1,5 @@
 # Создаем директорию для хранения ключей и сертификатов
+#https://docs.cloudera.com/runtime/7.2.0/kafka-securing/topics/kafka-secure-sign-cert.html
 # mkdir -p /etc/kafka/ssl && cd /etc/kafka/ssl
 cd /opt/certs
 # Генерация ключа для корневого CA
