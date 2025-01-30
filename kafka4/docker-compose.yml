@@ -28,7 +28,7 @@ services:
         - KAFKA_CERTIFICATE_PASSWORD=12345678
         - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
         - KAFKA_TLS_TYPE=JKS
-        - KAFKA_HEAP_OPTS=-Xmx8G -Xms8G
+        - KAFKA_HEAP_OPTS=-Xmx2G -Xms2G
         - KAFKA_JVM_PERFORMANCE_OPTS=-XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80
         - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
         - JMX_PORT=9997
@@ -67,7 +67,7 @@ services:
         - KAFKA_CERTIFICATE_PASSWORD=12345678
         - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
         - KAFKA_TLS_TYPE=JKS
-        - KAFKA_HEAP_OPTS=-Xmx8G -Xms8G
+        - KAFKA_HEAP_OPTS=-Xmx2G -Xms2G
         - KAFKA_JVM_PERFORMANCE_OPTS=-XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80
         - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
         - JMX_PORT=9997
@@ -107,7 +107,7 @@ services:
         - KAFKA_CERTIFICATE_PASSWORD=12345678
         - KAFKA_KRAFT_CLUSTER_ID=abcdefghijklmnopqrstuv
         - KAFKA_TLS_TYPE=JKS
-        - KAFKA_HEAP_OPTS=-Xmx8G -Xms8G
+        - KAFKA_HEAP_OPTS=-Xmx2G -Xms2G
         - KAFKA_JVM_PERFORMANCE_OPTS=-XX:MetaspaceSize=96m -XX:+UseG1GC -XX:MaxGCPauseMillis=20 -XX:InitiatingHeapOccupancyPercent=35 -XX:G1HeapRegionSize=16M -XX:MinMetaspaceFreeRatio=50 -XX:MaxMetaspaceFreeRatio=80
         - KAFKA_JMX_OPTS=-Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=u-p-bi-kafka-1.srv.bia-tech.ru -Dcom.sun.management.jmxremote.rmi.port=9997
         - JMX_PORT=9997
