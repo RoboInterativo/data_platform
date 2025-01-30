@@ -83,7 +83,7 @@ services:
       restart: unless-stopped
       image: bitnami/kafka:3.5.1
       hostname: kafka-3
-      container_name: kafka2
+      container_name: kafka3
       # ports:
       #   - "39092:39092"
       environment:
