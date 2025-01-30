@@ -1,6 +1,5 @@
-version: '3'
-
 services:
+
   kafka:
       restart: unless-stopped
       image: bitnami/kafka:3.5.1
