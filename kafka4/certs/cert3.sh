@@ -1,4 +1,5 @@
 # Генерация ключа для клиента
+cd /opt/certs
 openssl genrsa -out client-key.pem 2048
 
 # Создание CSR (Certificate Signing Request)
