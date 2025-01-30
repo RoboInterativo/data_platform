@@ -37,8 +37,8 @@ services:
 
       volumes:
         - '/opt/data/kafka:/bitnami/kafka'
-        - '/opt/certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - '/opt/certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+        - '/opt/certs:/bitnami/kafka/config/certs'
+        - '/opt/certs:/bitnami/kafka/config/certs'
       user: "0"
   kafka2:
       restart: unless-stopped
@@ -76,9 +76,9 @@ services:
 
       volumes:
         - '/opt/data/kafka2:/bitnami/kafka'
-        - '/opt/certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - '/opt/certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
-      user: "0"
+        - '/opt/certs:/bitnami/kafka/config/certs'
+        - '/opt/certs:/bitnami/kafka/config/certs'
+        user: "0"
   kafka3:
       restart: unless-stopped
       image: bitnami/kafka:3.5.1
@@ -115,9 +115,10 @@ services:
 
       volumes:
         - '/opt/data/kafka3:/bitnami/kafka'
-        - '/opt/certs/kafka.keystore.jks:/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
-        - '/opt/certs/kafka.truststore.jks:/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
-      user: "0"
+        - '/opt/certs:/bitnami/kafka/config/certs'
+        - '/opt/certs:/bitnami/kafka/config/certs'
+
+    user: "0"
       # network_mode: "host"
 
   # schema-registry:
