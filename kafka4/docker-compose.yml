@@ -79,6 +79,7 @@ services:
         - '/opt/certs:/bitnami/kafka/config/certs'
       user: "0"
   kafka3:
+      user: "0"
       restart: unless-stopped
       image: bitnami/kafka:3.5.1
       hostname: kafka-3
@@ -117,7 +118,7 @@ services:
         - '/opt/certs:/bitnami/kafka/config/certs'
         - '/opt/certs:/bitnami/kafka/config/certs'
 
-    user: "0"
+
       # network_mode: "host"
 
   # schema-registry:
