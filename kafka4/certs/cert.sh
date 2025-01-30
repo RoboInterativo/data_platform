@@ -1,12 +1,9 @@
-#!/bin/bash
-#Step 1
-keytool -keystore server.keystore.jks -alias localhost -validity 365 -genkey
-#Step 2
-openssl req -new -x509 -keyout ca-key -out ca-cert -days 365
-keytool -keystore server.truststore.jks -alias CARoot -import -file ca-cert
-keytool -keystore client.truststore.jks -alias CARoot -import -file ca-cert
-#Step 3
-keytool -keystore server.keystore.jks -alias localhost -certreq -file cert-file
-openssl x509 -req -CA ca-cert -CAkey ca-key -in cert-file -out cert-signed -days 365 -CAcreateserial -passin pass:SamplePassword123
-keytool -keystore server.keystore.jks -alias CARoot -import -file ca-cert
-keytool -keystore server.keystore.jks -alias localhost -import -file cert-signed
+# Создаем директорию для хранения ключей и сертификатов
+mkdir -p /etc/kafka/ssl && cd /etc/kafka/ssl
+
+# Генерация ключа для корневого CA
+openssl genrsa -out ca-key.pem 2048
+
+# Генерация корневого сертификата
+openssl req -x509 -new -nodes -key ca-key.pem -sha256 -days 3650 -out ca-cert.pem \
+-subj "/C=RU/ST=Moscow/L=Moscow/O=MyCompany/CN=Kafka Root CA"
