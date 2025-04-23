@@ -4,6 +4,7 @@ services:
 
   minio:
     image:  bitnami/minio:latest
+    network_mode: "host"
     environment:
       - MINIO_DATA_DIR=/data
       - MINIO_ROOT_USER=minio
