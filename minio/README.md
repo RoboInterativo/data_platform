@@ -61,7 +61,9 @@ mc replicate status server1/bucket1
 #server2
 mc replicate status server2/bucket1
 ```
+
 ![рис1](https://github.com/RoboInterativo/data_platform/tree/main/minio/media/fig1.png)
+
 Повторите тест в обратном направлении.
 
 ### Важные замечания:
