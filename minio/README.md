@@ -28,36 +28,14 @@ mc version enable server2/bucket1
 
 #### а) Настройте репликацию с server1 → server2
 ```bash
-# Добавьте удаленный целевой бакет на server1
-mc admin bucket remote add server1/bucket1 \
-  http://server2.example.com:9000/bucket1 \
-  --service "replication" \
-  --region "us-east-1" \
-  --access-key ACCESS_KEY_2 \
-  --secret-key SECRET_KEY_2
-
 # Создайте правило репликации
-mc replicate add server1/bucket1 \
-  --remote-bucket http://server2.example.com:9000/bucket1 \
-  --replicate "delete,delete-marker,existing-objects" \
-  --priority 1
+mc replicate add server1/bucket1   --remote-bucket server2/bucket1   --priority 1
 ```
 
 #### б) Настройте репликацию с server2 → server1
 ```bash
-# Добавьте удаленный целевой бакет на server2
-mc admin bucket remote add server2/bucket1 \
-  http://server1.example.com:9000/bucket1 \
-  --service "replication" \
-  --region "us-east-1" \
-  --access-key ACCESS_KEY_1 \
-  --secret-key SECRET_KEY_1
-
 # Создайте правило репликации
-mc replicate add server2/bucket1 \
-  --remote-bucket http://server1.example.com:9000/bucket1 \
-  --replicate "delete,delete-marker,existing-objects" \
-  --priority 1
+mc replicate add server2/bucket1   --remote-bucket server1/bucket1   --priority 1
 ```
 
 ### 4. Проверьте настройки
@@ -77,6 +55,12 @@ mc cp test.txt server1/bucket1
 mc ls server2/bucket1
 ```
 
+```bash
+#server1
+mc replicate status server1/bucket1
+#server2
+mc replicate status server2/bucket1
+```
 Повторите тест в обратном направлении.
 
 ### Важные замечания:

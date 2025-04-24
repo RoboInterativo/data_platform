@@ -1,22 +1,16 @@
 # Добавьте удаленный целевой бакет на server1
-# mc alias set server1 http://195.140.146.176:9000 minio minio123
-# mc alias set server2 http://185.43.7.214:9000 minio minio
 
+#mc mb server1/test
+#mc version enable server1/test
 
-# Алиасы серверов (должны быть созданы через mc alias заранее!)
-SERVER1_ALIAS="server1"
-SERVER2_ALIAS="server2"
+mc alias set server1 http://195.140.146.176:9000 minio minio123
+mc alias set server2 http://185.43.7.214:9000 minio minio
 
-# Добавление удаленного бакета
-mc admin bucket remote add $SERVER1_ALIAS/test \
-  http://$SERVER2_ALIAS/test \
-  --service-type "replication" \
-  --region "us-east-1" \
-  --access-key minio \
-  --secret-key minio123
 
 # Создание правила репликации
-mc replicate add $SERVER1_ALIAS/test \
-  --remote-bucket $SERVER2_ALIAS/test \
-  --replicate "delete,delete-marker,existing-objects" \
+mc replicate add server1/test \
+  --remote-bucket server2/test \
   --priority 1
+  
+mc replicate ls server2/test
+mc replicate status server1/test
