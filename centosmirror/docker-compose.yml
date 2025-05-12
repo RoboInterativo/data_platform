@@ -1,13 +1,21 @@
 version: "3.9"
 services:
-
-  mirror:
-    build: ./
-    # container_name: kafka-ui
+  proxy:
+    image: datadog/squid
     ports:
-     - 8181:80
-    restart: always
+     - 192.168.0.3:3128:3128
     volumes:
-      - mirror:/mirror
-volumes:
-  mirror:
+      - ./config/squid.conf:/etc/squid/squid.conf
+      - ./cache:/var/spool/squid
+      - ./logs:/var/log/squid
+
+#   mirror:
+#     build: ./
+#     # container_name: kafka-ui
+#     ports:
+#      - 8181:80
+#     restart: always
+#     volumes:
+#       - mirror:/mirror
+# volumes:
+#   mirror:
