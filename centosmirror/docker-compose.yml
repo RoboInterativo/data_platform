@@ -1,7 +1,9 @@
 version: "3.9"
 services:
   proxy:
-    image: datadog/squid
+    image: ubuntu/squid:5.2-22.04_beta
+
+      #datadog/squid
     ports:
      - 192.168.0.3:3128:3128
     volumes:
