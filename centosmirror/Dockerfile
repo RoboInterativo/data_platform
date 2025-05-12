@@ -4,6 +4,7 @@ FROM  moongeun/centos9:1.1
 # Установка зависимостей
 RUN dnf install -y \
     dnf-plugins-core \
+    reposync \
     createrepo_c \
     nginx \
     cronie \
