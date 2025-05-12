@@ -11,7 +11,7 @@ services:
       - ./cache:/var/spool/squid
        - ./logs:/var/log/squid
     user: "1000:1000"  # UID/GID пользователя на хосте
-    restart: unless-stoppe
+    restart: unless-stopped
 #   mirror:
 #     build: ./
 #     # container_name: kafka-ui
