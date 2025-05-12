@@ -7,7 +7,7 @@ services:
     ports:
      - 192.168.0.3:3128:3128
     volumes:
-      - ./config/squid.conf:/etc/squid/squid.conf
+      - ./conf/squid.conf:/etc/squid/squid.conf
       - ./cache:/var/spool/squid
       - ./logs:/var/log/squid
 
