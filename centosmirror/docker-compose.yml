@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+
+  mirror:
+    image: centos:9
+    # container_name: kafka-ui
+    #ports:
+    #  - 8090:8080
+    restart: always
