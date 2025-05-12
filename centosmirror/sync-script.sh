@@ -1,8 +1,9 @@
 #!/bin/bash
 
 # Репозитории для зеркалирования
-REPO_BASEOS="https://mirror.stream.centos.org/9-stream/BaseOS/x86_64/os/"
-REPO_APPSTREAM="https://mirror.stream.centos.org/9-stream/AppStream/x86_64/os/"
+BASE="https://mirror.yandex.ru/centos-stream"
+REPO_BASEOS="$BASE/9-stream/BaseOS/x86_64/os/"
+REPO_APPSTREAM="$BASE/9-stream/AppStream/x86_64/os/"
 
 # Синхронизация BaseOS
 rsync -avz --delete --exclude='repodata' \
