@@ -9,8 +9,9 @@ services:
     volumes:
       - ./conf/squid.conf:/etc/squid/squid.conf
       - ./cache:/var/spool/squid
-       - ./logs:/var/log
-
+       - ./logs:/var/log/squid
+    user: "1000:1000"  # UID/GID пользователя на хосте
+    restart: unless-stoppe
 #   mirror:
 #     build: ./
 #     # container_name: kafka-ui
