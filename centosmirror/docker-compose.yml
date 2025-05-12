@@ -10,8 +10,12 @@ services:
       - ./conf/squid.conf:/etc/squid/squid.conf
       - ./cache:/var/spool/squid
        - ./logs:/var/log/squid
+       - squid_pid:/run
+
     user: "1000:1000"  # UID/GID пользователя на хосте
     restart: unless-stopped
+volumes:
+  squid_pid:  # Том для PID-файла
 #   mirror:
 #     build: ./
 #     # container_name: kafka-ui
