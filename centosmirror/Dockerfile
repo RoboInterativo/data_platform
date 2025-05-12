@@ -17,7 +17,6 @@ COPY sync-script.sh /sync-script.sh
 
 # Разрешения и инициализация
 RUN chmod +x /sync-script.sh
-#\
 #    && createrepo_c /mirror/baseos \
 #    && createrepo_c /mirror/appstream
 
