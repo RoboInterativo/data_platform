@@ -9,7 +9,7 @@ services:
     volumes:
       - ./conf/squid.conf:/etc/squid/squid.conf
       - ./cache:/var/spool/squid
-      # - ./logs:/var/log/squid
+       - ./logs:/var/log
 
 #   mirror:
 #     build: ./
