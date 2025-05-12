@@ -15,6 +15,7 @@ REPO_APPSTREAM="$BASE/9-stream/AppStream/x86_64/os/"
 #   rsync://mirror.centos.org/centos/9-stream/AppStream/x86_64/os/ \
 #   /mirror/appstream
 # Синхронизация BaseOS
+rm -rf /mirror/baseos/repodata* /mirror/appstream/repodata*
 reposync \
   --repo=baseos \
   --download-metadata \
