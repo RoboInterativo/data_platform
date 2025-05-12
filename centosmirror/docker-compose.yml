@@ -8,5 +8,6 @@ services:
      - 8181:80
     restart: always
     volumes:
-      - ./baseos:/mirror/baseos
-      - ./appstream:/mirror/appstream
+      - mirror-data:/mirror
+volumes:
+  mirror:
