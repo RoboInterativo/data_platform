@@ -8,7 +8,7 @@ services:
 
     container_name: nginxnode
     # ports:
-    #   - "80:80"
+      - "80:80"
     environment:
      - client_auth_basic=bXljbGllbnQ6djdQVUJOeXIzVEI5RnB3ak8xZ1BiTTJyREEwRUxG
      - KEYCLOAK_URL="http://keycloak:8080"
@@ -30,6 +30,7 @@ services:
     # network_mode: host
   back:
     build: ./back
+    co
     container_name: back
     restart: always
     network_mode: host
