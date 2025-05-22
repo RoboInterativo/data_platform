@@ -29,11 +29,15 @@ services:
     #   - keycloak-node2
     # network_mode: host
   back:
-    build: ./back
-    co
+
+    build:
+      context: back
+      dockerfile: .
+
     container_name: back
+    hostname: back
     restart: always
-    network_mode: host
+    # network_mode: host
     user: nobody:nogroup
     environment:
       - PORT=8082

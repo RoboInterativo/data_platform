@@ -77,4 +77,4 @@ def create_app():
 app = create_app()  # Создаем экземпляр приложения
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5555)
+    app.run(host='0.0.0.0', port=8082)
