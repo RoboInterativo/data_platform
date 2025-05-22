@@ -63,7 +63,7 @@ services:
       - ./ldap:/bitnami/openldap
 
   postgresql:
-    user: root  #
+    # user: root  #
     image: bitnami/postgresql:latest
     container_name: postgresql
     environment:
@@ -72,7 +72,7 @@ services:
       - POSTGRESQL_PASSWORD=keycloak_password
     volumes:
       # - postgresql_data:/bitnami/postgresql
-      - /opt/pgdata:/bitnami/postgresql/data
+      - data:/bitnami/postgresql/data
     network_mode: host
     restart: always
 
@@ -103,3 +103,5 @@ services:
       - postgresql
     network_mode: host
     restart: always
+volumes:
+  data:
