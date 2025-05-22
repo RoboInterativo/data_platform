@@ -36,7 +36,7 @@ services:
     container_name: back
     hostname: back
     restart: always
-    # network_mode: host
+    network_mode: host
     user: nobody:nogroup
     environment:
       - PORT=8082
@@ -45,7 +45,7 @@ services:
     image: bitnami/openldap:2.5.16
     user: root
     container_name: openldap
-    # network_mode: host
+    network_mode: host
     hostname: openldap
     restart: always
     environment:
@@ -72,7 +72,7 @@ services:
     volumes:
       # - postgresql_data:/bitnami/postgresql
       - /opt/pgdata:/bitnami/postgresql
-    # network_mode: host
+    network_mode: host
     restart: always
 
   keycloak-node1:
@@ -100,5 +100,5 @@ services:
     #   - "8081:8080"
     depends_on:
       - postgresql
-    # network_mode: host
+    network_mode: host
     restart: always
