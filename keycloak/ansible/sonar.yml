@@ -1,0 +1,74 @@
+---
+- name: newservers_init
+  hosts: sonar
+
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: setup docker
+      ansible.builtin.template:
+        src: daemon.json
+        # dest: /var/snap/docker/current/config/daemon.json
+        dest: /etc/docker/daemon.json
+
+    # - name: Run INFO
+    #   ansible.builtin.command:
+    #     cmd: snap restart docker
+
+    - name: Enable and start Docker service
+      service:
+        name: docker
+        state: restarted
+        enabled: yes
+
+
+
+    - name: Create a directory /root/.docker
+      ansible.builtin.file:
+        path: /root/.docker
+        state: directory
+
+    - name: Copy file docker config.json
+      ansible.builtin.copy:
+        src: config.json
+        dest: /root/.docker/config.json
+#---------------------------------------------
+    - name: " Create a directory {{item}}"
+      ansible.builtin.file:
+        path: "{{item}}"
+        state: directory
+        mode: '0777'
+      with_items:
+        # - "/opt/redis"
+        # - "/opt/mysql"
+        # - "/var/www/wiki"
+        - "/opt/sonardata"
+        - "/opt/pgdata"
+#---------------------------------------
+    - name: Установить несколько пакетов
+      ansible.builtin.apt:
+        name:
+          - zip
+          - unzip
+#--------------------------------------------
+    - name: Update repository
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:a.shilo/infra.git'
+        dest: /opt/infra
+        version: main  # или нужная ветка
+        force: yes
+      register: repo_updated
+
+    # - name: CLEAR images
+    #   ansible.builtin.command:
+    #     cmd: docker image prune -f
+    #     #chdir: "/opt/infra/back_fro
+
+    - name: Run sonar
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/sonarqube"
+      #when: repo_updated.changed

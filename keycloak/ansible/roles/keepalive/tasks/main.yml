@@ -1,0 +1,77 @@
+---
+- name: Install Keepalived
+  apt:
+    name: keepalived
+    state: present
+    update_cache: yes
+
+- name: Create Keepalived configuration directory
+  file:
+    path: /etc/keepalived
+    state: directory
+    mode: '0755'
+
+# - name: Copy check_keycloak.sh script to /usr/local/bin
+#   copy:
+#       src: files/check_keycloak.sh
+#       dest: /usr/local/bin/check_keycloak.sh
+#       mode: '0755'
+
+- name: Deploy Keepalived script
+  template:
+    src: check_keycloak.sh
+    dest:  /usr/local/bin/check_keycloak.sh
+    mode: '0755'
+
+# - name: "Deploy check_{{ services[item].name }}.sh script"
+#   template:
+#     src: check.sh.j2
+#     dest:  "/usr/local/bin/check_{{ services[item].name }}.sh"
+#     mode: '0755'
+#   with_items: "{{ services | list }}"
+
+# - name: debug dictionary
+#   debug: msg="{{ databases[item].db_url }}"
+#   with_items: "{{ databases | list }}"
+
+  # notify: Restart Keepalived
+
+
+- name: Added a keepalived_script user
+  ansible.builtin.user:
+    name:  keepalived_script
+    shell:  /usr/sbin/nologin
+
+- name: Deploy Keepalived configuration
+  template:
+    src: keepalived.conf.j2
+    dest: /etc/keepalived/keepalived.conf
+    mode: '0644'
+    validate: keepalived -t -f %s
+  notify: Restart Keepalived
+
+- name: Enable and start Keepalived service
+  service:
+    name: keepalived
+    state: restarted
+    enabled: yes
+
+- name: Check if Keepalived is running
+  shell: systemctl is-active keepalived
+  register: keepalived_status
+  changed_when: false
+  failed_when: keepalived_status.stdout != "active"
+
+- name: Debug Keepalived status
+  debug:
+    msg: "Keepalived is {{ keepalived_status.stdout }}"
+
+# - name: Check if virtual IP is assigned
+#   shell: ip addr show {{ interface }} | grep {{ virtual_ip }}
+#   register: vip_status
+#   changed_when: false
+#   failed_when: vip_status.rc != 0
+#
+# - name: Debug virtual IP status
+#   debug:
+#     msg: "Virtual IP {{ virtual_ip }} is {% if vip_status.rc == 0 %}assigned{% else %}not assigned{% endif %}"

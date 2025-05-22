@@ -1,0 +1,37 @@
+- name: newservers_init
+  hosts: mons
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: setup docker
+      ansible.builtin.template:
+        src: daemon.json
+        dest: /etc/docker/daemon.json
+
+    - name: Create a directory /root/.docker
+      ansible.builtin.file:
+        path: /root/.docker
+        state: directory
+
+    - name: Copy file docker config.json
+      ansible.builtin.copy:
+        src: config.json
+        dest: /root/.docker/config.json
+
+
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
+    - name: Update repository
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:a.shilo/infra.git'
+        dest: /opt/infra
+        version: main  # или нужная ветка
+        force: yes
+      register: repo_updated

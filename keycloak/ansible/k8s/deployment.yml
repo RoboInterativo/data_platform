@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deploymentbot
+  labels:
+    app: bot
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+
+  selector:
+    matchLabels:
+      app: bot
+  template:
+    metadata:
+      labels:
+        app: bot
+    spec:
+      containers:
+      - name: simple-app
+        image: registry.robointerativo.org/sandbox/flask_test:TAG
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        volumeMounts:
+
+            - mountPath: "/opt/secret"
+              name: trello
+              readOnly: true
+
+            - mountPath: /var/log
+              name: varlog
+      imagePullSecrets:
+      - name: registry-credentials
+      volumes:
+      - name: trello
+        secret:
+            secretName: trello
+      - name: varlog
+        emptyDir: {}

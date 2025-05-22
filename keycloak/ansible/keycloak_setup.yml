@@ -1,0 +1,86 @@
+---
+- name: Настройка Keycloak с OpenLDAP
+  hosts: keycloak1
+  vars:
+    keycloak_url: "http://localhost:8080"
+    keycloak_realm: "master"
+    keycloak_admin_username: "admin"
+    keycloak_admin_password: "adminpassword"
+    client_id: "myclient"
+    client_name: "My Client"
+    ldap_connection_url: "ldap://localhost:389"  # Укажите правильный хост и порт OpenLDAP
+    ldap_root: "{{ lookup('env', 'LDAP_ROOT') }}"  # Используем переменную окружения LDAP_ROOT
+    ldap_admin_username: "{{ lookup('env', 'LDAP_ADMIN_USERNAME') }}"  # Используем переменную окружения LDAP_ADMIN_USERNAME
+    ldap_admin_password: "{{ lookup('env', 'LDAP_ADMIN_PASSWORD') }}"  # Используем переменную окружения LDAP_ADMIN_PASSWORD
+    ldap_users_dn: "ou=users,{{ ldap_root }}"  # Базовый DN для пользователей
+    ldap_bind_dn: "cn={{ ldap_admin_username }},{{ ldap_root }}"  # Bind DN для подключения к LDAP
+    ldap_bind_credential: "{{ ldap_admin_password }}"  # Пароль для Bind DN
+  tasks:
+    - name: Получение токена доступа Keycloak
+      uri:
+        url: "{{ keycloak_url }}/realms/{{ keycloak_realm }}/protocol/openid-connect/token"
+        method: POST
+        body_format: form-urlencoded
+        body:
+          client_id: admin-cli
+          username: "{{ keycloak_admin_username }}"
+          password: "{{ keycloak_admin_password }}"
+          grant_type: password
+        return_content: yes
+      register: token_response
+
+    - name: Извлечение access_token
+      set_fact:
+        access_token: "{{ token_response.json.access_token }}"
+
+    - name: Создание клиента в Keycloak
+      uri:
+        url: "{{ keycloak_url }}/admin/realms/{{ keycloak_realm }}/clients"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ access_token }}"
+          Content-Type: application/json
+        body:
+          clientId: "{{ client_id }}"
+          name: "{{ client_name }}"
+          enabled: true
+          protocol: openid-connect
+        body_format: json
+        status_code: 201
+      register: create_client_response
+
+    - name: Настройка LDAP-провайдера для OpenLDAP
+      uri:
+        url: "{{ keycloak_url }}/admin/realms/{{ keycloak_realm }}/components"
+        method: POST
+        headers:
+          Authorization: "Bearer {{ access_token }}"
+          Content-Type: application/json
+        body:
+          name: "ldap"
+          providerId: "ldap"
+          providerType: "org.keycloak.storage.UserStorageProvider"
+          parentId: "{{ keycloak_realm }}"
+          config:
+            enabled: [ "true" ]
+            cachePolicy: [ "DEFAULT" ]
+            editMode: [ "READ_ONLY" ]
+            syncRegistrations: [ "false" ]
+            vendor: [ "other" ]
+            usernameLDAPAttribute: [ "cn" ]
+            rdnLDAPAttribute: [ "cn" ]
+            uuidLDAPAttribute: [ "entryUUID" ]
+            userObjectClasses: [ "inetOrgPerson, organizationalPerson" ]
+            connectionUrl: [ "{{ ldap_connection_url }}" ]
+            usersDn: [ "{{ ldap_users_dn }}" ]
+            authType: [ "simple" ]
+            bindDn: [ "{{ ldap_bind_dn }}" ]
+            bindCredential: [ "{{ ldap_bind_credential }}" ]
+        body_format: json
+        status_code: 201
+      register: ldap_setup_response
+
+    - name: Проверка успешности настройки LDAP
+      debug:
+        msg: "LDAP провайдер успешно настроен"
+      when: ldap_setup_response.status == 201

@@ -1,0 +1,12 @@
+[Unit]
+Description=Microblog web application
+After=network.target
+
+[Service]
+
+WorkingDirectory=/home/firststeps/examples_code/flask_sqlite
+ExecStart=/home/firststeps/venv/bin/python /home/firststeps/examples_code/flask_sqlite/main.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

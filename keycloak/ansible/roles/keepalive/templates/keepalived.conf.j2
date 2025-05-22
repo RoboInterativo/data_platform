@@ -1,0 +1,38 @@
+global_defs {
+    enable_script_security
+}
+
+# Проверка Keycloak
+vrrp_script check_keycloak {
+    script "/usr/local/bin/check_keycloak.sh"
+    user root
+    interval 5  # Интервал проверки в секундах
+    timeout 2   # Таймаут выполнения скрипта
+    weight -20  # Уменьшает приоритет на 20, если скрипт возвращает ошибку
+}
+
+
+
+
+vrrp_instance VI_1 {
+    state {{ state }}
+    interface {{ interface }}
+    virtual_router_id {{ virtual_router_id }}
+    priority {{ priority }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ virtual_ip }}
+    }
+
+    # Отслеживаем все скрипты
+    track_script {
+        check_keycloak
+
+    }
+}

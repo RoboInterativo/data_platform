@@ -1,0 +1,26 @@
+---
+- name: newservers_init
+  hosts: web
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: Install a list of packages
+      apt:
+        pkg:
+          - python3.11
+          - python3.11-venv
+          - python3-virtualenv
+
+
+    # Example git checkout from Ansible Playbooks
+    - git:
+        repo: '{{ giturl }}'
+        dest: /home/firststeps/
+
+    - pip:
+        requirements: /home/firststeps/examples_code/flask_sqlite/req.txt
+        virtualenv: /home/firststeps/venv
+        virtualenv_python: python3.11

@@ -1,0 +1,102 @@
+- name: newservers_init
+  hosts: keycloak
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: setup docker
+      ansible.builtin.template:
+        src: daemon.json
+        dest: /etc/docker/daemon.json
+
+    - name: Create a directory /root/.docker
+      ansible.builtin.file:
+        path: /root/.docker
+        state: directory
+
+    - name: Copy file docker config.json
+      ansible.builtin.copy:
+        src: config.json
+        dest: /root/.docker/config.json
+
+    - name: Run
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt"
+
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: restarted
+
+    - name: Update repository
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:a.shilo/infra.git'
+        dest: /opt/infra
+        version: main  # или нужная ветка
+        force: yes
+      register: repo_updated
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+
+    - name: Run KEYCLOAK
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/keycloak/{{ keycloakdir |string }}"
+      #when: repo_updated.changed
+
+    - name: Run NATS
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/nats/{{ natsdir |string }}"
+
+
+    - name: Установить несколько пакетов
+      ansible.builtin.apt:
+        name:
+          - zip
+          - unzip
+
+    - name: Create a directory /var/www/wiki
+      ansible.builtin.file:
+        path: /var/www/wiki
+        state: directory
+        mode: '0755'
+    - name: Create a directory /opt/mysql
+      ansible.builtin.file:
+        path: /opt/mysql
+        state: directory
+        mode: '0777'
+
+    - name: Copy file LocalSettings.php
+      ansible.builtin.copy:
+        src: LocalSettings.php
+        dest: /var/www/wiki/mediawiki-1.43.0/LocalSettings.php
+
+    - name: Copy file logo.png
+      ansible.builtin.copy:
+        src: logo.png
+        dest: /var/www/wiki/mediawiki-1.43.0/resources/assets/logo.png
+    # owner: foo
+    # group: foo
+    # mode: '0644'
+
+    # - name: Unarchive a file
+    #   ansible.builtin.unarchive:
+    #     src: https://releases.wikimedia.org/mediawiki/1.43/mediawiki-1.43.0.zip
+    #     dest: /var/www/wiki
+    #     remote_src: yes
+    #   no_log: true
+
+
+
+    - name: Run BACK
+      ansible.builtin.command:
+        cmd: docker compose up -d   --remove-orphans
+        chdir: "/opt/infra/back_front"

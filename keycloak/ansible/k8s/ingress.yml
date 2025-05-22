@@ -1,0 +1,31 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-production
+    ingress.kubernetes.io/force-ssl-redirect: "true" #<-- this was used for Traefik 1.7
+    ingress.kubernetes.io/ssl-redirect: "true" # <-- this was used for Traefik 1.7
+    kubernetes.io/ingress.provider: traefik
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+  creationTimestamp: "2023-10-24T01:17:44Z"
+  generation: 1
+  labels:
+    app: bot
+  name: bot-ingresss
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: ruslanbot.robointerativo.org
+    http:
+      paths:
+      - backend:
+          service:
+            name: flask-servicebot-service
+            port:
+              number: 8000
+        path: /
+        pathType: Prefix
+  tls:
+  - hosts:
+    - ruslanbot.robointerativo.org
+    secretName:  bot-certs

@@ -1,0 +1,14 @@
+---
+- name: newservers_init
+  hosts: kafka
+  become: yes
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: compose
+      apt:
+        name:  docker-compose
+        update_cache: yes

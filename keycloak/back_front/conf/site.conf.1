@@ -1,0 +1,153 @@
+server {
+    listen 80;
+    server_name localhost;
+    root /var/www;
+
+    # Common proxy settings
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # Keycloak endpoints
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/token$ {
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/token;
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type "application/x-www-form-urlencoded";
+
+        # CORS
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        # add_header 'Access-Control-Allow-Methods' 'GET, POST,PUT, OPTIONS, PATCH, DELETE' always;
+        # add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+    }
+
+
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/userinfo$ {
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/userinfo;
+        proxy_set_header Authorization $http_authorization;
+
+        # CORS
+        add_header 'Access-Control-Allow-Origin' '*' always;
+        # add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT,OPTIONS, PATCH, DELETE' always;
+        # add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+    }
+
+
+    location /api/fc/ {
+        proxy_pass http://127.0.0.1:8082/api/v1/fc/;
+        include /etc/nginx/cors.conf; # Extract CORS to a separate file for reuse
+    }
+
+    location /api/hardware/ {
+        proxy_pass http://127.0.0.1:8082/api/v1/hardware/;
+        include /etc/nginx/cors.conf;
+    }
+
+    location /api/ctrl/ {
+         proxy_pass http://127.0.0.1:8082/api/v1/ctrl/;
+         include /etc/nginx/cors.conf;
+     }
+
+
+    location @error401 {
+        return 401 '{"error": "Unauthorized", "message": "Invalid or expired token"}';
+        add_header Content-Type application/json;
+    }
+
+    location @error403 {
+        return 403 '{"error": "Forbidden", "message": "Insufficient permissions"}';
+        add_header Content-Type application/json;
+    }
+    location /api/network/ {
+        proxy_pass http://127.0.0.1:8082/api/v1/network/;
+        include /etc/nginx/cors.conf;
+    }
+
+    location /api/iscsi/ {
+        proxy_pass http://127.0.0.1:8082/iscsi/;
+        include /etc/nginx/cors.conf;
+    }
+
+#==================
+location = /_validate_token {
+    internal;
+    proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/token/introspect;
+
+    proxy_pass_request_body on;
+    proxy_set_header Content-Type "application/x-www-form-urlencoded";
+    proxy_set_header Authorization "Basic bXljbGllbnQ6OW52N1BVQk55cjNUQjlGcHdqTzFnUGJNMnJEQTBFTEY=";
+
+    # Извлечение токена
+    set $clean_token $http_authorization;
+    if ($http_authorization ~* "^Bearer\s+(.+)$") {
+        set $clean_token $1;
+    }
+    proxy_set_body "token=$clean_token";
+
+    proxy_method POST;
+    proxy_http_version 1.1;
+
+    # Логирование
+    access_log /var/log/nginx/validate_token_access.log main;
+    error_log /var/log/nginx/validate_token_error.log debug;
+}
+
+
+    # Логин не требует токена (один вариант)
+    # location /api/auth/login {
+    #     proxy_pass http://127.0.0.1:8082;
+    #     include /etc/nginx/cors.conf;
+    # }
+    #
+    # # Все защищенные API, кроме login
+    # location ~ ^/api/(?!auth/login).*$ {
+    #     auth_request /_validate_token;
+    #     auth_request_set $auth_status $upstream_status;
+    #     error_page 401 = @error401;
+    #     proxy_pass http://127.0.0.1:8082;
+    #     include /etc/nginx/cors.conf;
+    # }
+
+
+
+    # 🔥 Обработка ошибки 401 (неавторизован)
+    # location @error401 {
+    #     return 401 '{"error": "Unauthorized", "message": "Invalid or expired token"}';
+    #     add_header Content-Type application/json;
+    # }
+#================
+
+    # Generic API catch-all
+    location /api/ {
+        proxy_pass http://127.0.0.1:8088;
+        include /etc/nginx/cors.conf;
+    }
+
+    # Socket.io
+    location /socket.io/ {
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        include /etc/nginx/cors.conf; # Add CORS support for WebSocket
+    }
+
+    # Frontend
+    location / {
+        try_files $uri $uri/ /index.html;
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png|svg)$ {
+            expires 30d;
+            add_header Cache-Control "public";
+        }
+    }
+
+    # Block PHP outside allowed zones
+    location ~ ^/(?!wiki).*\.php$ {
+        return 404;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}

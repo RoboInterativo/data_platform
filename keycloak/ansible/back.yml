@@ -1,0 +1,210 @@
+- name: newservers_init
+  hosts: keycloak
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: setup docker
+      ansible.builtin.template:
+        src: daemon.json
+        # dest: /var/snap/docker/current/config/daemon.json
+        dest: /etc/docker/daemon.json
+
+    # - name: Run INFO
+    #   ansible.builtin.command:
+    #     cmd: snap restart docker
+
+    - name: Enable and start Docker service
+      service:
+        name: docker
+        state: restarted
+        enabled: yes
+
+
+
+    - name: Create a directory /root/.docker
+      ansible.builtin.file:
+        path: /root/.docker
+        state: directory
+
+    - name: Copy file docker config.json
+      ansible.builtin.copy:
+        src: config.json
+        dest: /root/.docker/config.json
+
+
+
+
+
+    - name: Update repository
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:a.shilo/infra.git'
+        dest: /opt/infra
+        version: main  # или нужная ветка
+        force: yes
+      register: repo_updated
+
+    - name: Update repository DB mock_api
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:baum/mock_api.git'
+        dest: /opt/mock_api
+        version: dev  # или нужная ветка
+        force: yes
+      register: repo_updated
+
+    - name: Ensure Docker service is running
+      ansible.builtin.service:
+        name: docker
+        state: started
+
+
+
+    - name: " Create a directory {{item}}"
+      ansible.builtin.file:
+        path: "{{item}}"
+        state: directory
+        mode: '0777'
+      with_items:
+        # - "/opt/redis"
+        # - "/opt/mysql"
+        # - "/var/www/wiki"
+        - "/opt/db"
+        - "/opt/ldap"
+        - "/opt/pgdata"
+        # - "/var/www/frontend"
+
+    # - name: Copy DB
+    #   ansible.builtin.copy:
+    #     src: /opt/mock_api/db_default
+    #     dest: /opt/db
+    #     remote_src: yes
+
+    - name: DEBUG
+      debug:
+        var: inventory_hostname
+
+    - name: Настройка сервера nfs
+      when: inventory_hostname=="keycloak1"
+      block:
+        - name: Установить несколько пакетов
+          ansible.builtin.apt:
+            name:
+              - nfs-client
+              - nfs-common
+              - nfs-server
+
+        - name: EXPORT TEMPLATE
+          ansible.builtin.template:
+            src: exports.j2
+            dest: /etc/exports
+
+
+        - name: Перезапуск nfs
+          systemd:
+            name: nfs-server
+            state: restarted
+#=========================================================
+    - name: Настройка клиентов nfs
+      when: inventory_hostname in ["keycloak2","keycloak3"]
+      block:
+        - name: Установить несколько пакетов
+          ansible.builtin.apt:
+            name:
+              - nfs-client
+              - nfs-common
+
+        - name: Add a line to a file
+          ansible.builtin.lineinfile:
+            path: /etc/fstab
+            state: present
+            line: "{{ nfsmount}}"
+
+        #create: yes
+
+
+#-----------------
+
+
+
+    - name: Установить несколько пакетов
+      ansible.builtin.apt:
+        name:
+          - zip
+          - unzip
+
+
+    - name: Setting host facts using complex arguments
+      ansible.builtin.set_fact:
+        JOB:  "{{ lookup('ansible.builtin.env', 'ART_JOB') }}"
+        BRANCH:  "{{ lookup('ansible.builtin.env', 'ART_BRANCH') }}"
+
+#------------------------------------------------------------------------
+    #
+    # - name: Run INFO
+    #   ansible.builtin.command:
+    #     cmd: docker info
+        #grep Insecure
+        # chdir: "/opt/infra/back_front"
+
+
+
+    - name: CLEAR images
+      ansible.builtin.command:
+        cmd: docker image prune -f
+        #chdir: "/opt/infra/back_fro
+
+    - name: Run KEYCLOAK
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/keycloak/{{ keycloakdir |string }}"
+      #when: repo_updated.changed
+
+    - name: Run NATS
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/nats/{{ natsdir |string }}"
+
+
+
+    - name: Run BACK UP
+      ansible.builtin.command:
+        cmd: docker compose up -d  --remove-orphans
+        chdir: "/opt/infra/back_front"
+
+    - name: GENERATE CONF NGINX
+      ansible.builtin.template:
+        src: site.conf.j2
+        # dest: /var/snap/docker/current/config/daemon.json
+        dest: /opt/site.conf
+
+
+    - name: Run BACK
+      ansible.builtin.command:
+        cmd: docker compose restart
+        chdir: "/opt/infra/back_front"
+
+    - name: Run BACK-MDS
+      ansible.builtin.command:
+        cmd: docker compose  up -d --pull always --remove-orphans
+        chdir: "/opt/infra/mds-rest2"
+
+    - name: Run BACK restart
+      ansible.builtin.command:
+        cmd: docker compose restart
+        chdir: "/opt/infra//mds-rest2"
+#------------------------------------------------------------------------
+
+    - name: Download file with custom HTTP headers
+      ansible.builtin.get_url:
+        url: "http://mds-gitlab.npobaum.ru/api/v4/projects/25/jobs/artifacts/{{BRANCH}}/download?job={{JOB}}"
+        dest: /var/www/front.zip
+        headers:
+          PRIVATE-TOKEN:  "{{ lookup('ansible.builtin.env', 'API_KEY') }}"
+
+    - name: Unarchive a file that is already on the remote machine
+      ansible.builtin.unarchive:
+        src: /var/www/front.zip
+        dest: /var/www
+        remote_src: yes

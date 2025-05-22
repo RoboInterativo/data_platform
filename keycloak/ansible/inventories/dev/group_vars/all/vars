@@ -1,0 +1,120 @@
+packs:
+  - nginx
+  - php-fpm
+giturl: https://github.com/RoboInterativo/firststeps.git
+
+admin_pub_key: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC0nrXR3aIWFJlycnOCHmaQdjE9Pg/qnP9YIfa+TBQ4qC/iyceSZW2Thibhszdz+99FVUeq8K2IlvbYSt60UDucjL3GaVEbBx11DNgNBObnayDtc2Mp1JWDOO54+ET6W33oKgPUvNTdxvRrl4O7si1wkHyl+tTk8/xAl0umP49K1+n2hj8BWEyfu9SfmvVOEj4n78C/x9p4xN6CdDm9NbgcdhBqfjhRIShH68G8nZ+SyJwZ3+toLpxvdHCKeUsixJFr0No1cbh68bj9Sdhvs/qXQsZF/opChNYHs9yK+H1xBDGIwrWv06oHEF7js9r1Y0D/SKMHKSTBPE+vmlkC970g5tW0yaJPDJsCfAKkHO7Fuy6QVN5M4TJ3CeVi7uQHwtheJoT5cK5P7g4jE7juZcBwEw6PpWmB6ZCh1tDQgvsIPPk5nc0BIGosLPOMc1y4tdX3G6iILfHDTx0j0MLLnHb92Tp+bEZhhQTrobbSm9zIpDWjDg0rBtDrHIjXu75EKRc= chief33@chief33-911AirD"
+
+dockerconfig:
+  insecure-registries:
+    - "mds-gitlab.npobaum.ru:5050"
+
+alexkey: "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIF+LweLcoAQWm+cA4PGpX5zQJg8M4yOAz20Z2Hp5u/ET chief@DESKTOP-HJUMD40"
+
+nfsdir:
+ - "/opt/db"
+
+nfsnodes:
+  - 172.16.1.153
+  - 172.16.1.165
+  - 172.16.1.166
+
+routes:
+
+  - endpoint: /auth/
+    host: "http://127.0.0.1"
+    port: "8080"
+    route: ""
+    desc: "Keycloak"
+#-------------------------------------------
+  - endpoint: /api
+    host: "http://127.0.0.1"
+    port: "8088"
+    route: /net
+    desc: "MOCK-API"
+
+  - endpoint: /socket.io/
+    host: "http://127.0.0.1"
+    port: "5000"
+    route: /net
+    socket: yes
+    desc: "MOCK-API SOCKET.IO"
+
+#-----------------------------------------
+  - endpoint: /api/net
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /net
+    desc: "Сетевые интерфейсы"
+
+  - endpoint: "/api/iscsi"
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /iscsi
+    desc: ""
+
+#-------------------------------------------------
+
+  - endpoint: "/api/hardware"
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /api/v1/hardware
+    desc: "Оборудование"
+
+
+
+  - endpoint: "/api/crtl"
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /api/v1/ctrl
+    desc: ""
+
+  - endpoint: "/api/fc"
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /api/v1/fc
+    desc: ""
+
+  - endpoint: "/api/network"
+    host: "http://127.0.0.1"
+    port: "8082"
+    route: /api/v1/network
+    desc: ""
+
+userlist:
+  - mkyzyma
+  - max
+  - aposadov
+  - dmitriy
+  - danil
+  - 1gr
+
+
+
+
+#nfsmount: "172.16.1.246:/opt/db /opt/db/ nfs rw,bg,soft,intr,nosuid 0 0"
+#nfsmount: "172.16.1.153:/opt/db /opt/db/    nfs     auto    0 0"
+nfsmount: "172.16.1.153:/opt/db  /opt/db  nfs  rw,nolock,vers=4,auto  0  0"
+
+mkyzyma: ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIAU3c4Ifo0YtTpQfPM9rn/BOt7lTf83lYwj8Osmz8AlG mkyzyma@gamil.com
+
+aposadov: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDYfHGBPHEVF0JnN5xJfoquC3XpUN2Uoi2ibvZuJxCXYOc+ZQEGUAM5Pzwk+2RGNzzJIurcmyEjuFNbTmNgexXy3cwPyTIu1ZNxAs+hceo8Wq4QRjZ4ypd+OMwu+Bvl2T0HR/vecT/pAZ/cmCMVg0pSLWcZJBNMppIeVss0L1SiPBHDivNLal0fJdehH4oFDN983m5SY9/dVq3R+1ewuuVPgUNTs0TG39h1Xx1mBiI1vBZxdJ4OsAZTiH0sCP1xW+1eDoamdIAkEgR/qFWbrI58H9Hl/rqvA6e/LiZFTMfrKdj9YDG9I53hDoMwhaxv7ibbfT/24CoujNY1TJ5QZ3hB9mdjcEW4QlBMu4/qQaXkuWKpe8W9k6/20e4+dgyl0F5mCCbLrQNohHbGuYdlsOjDV224vx1gbvAuvI2CLI8GkqsTpkUUxnefXx8evgwhMEaj1npAytxG3fF9CVVdviPWVsrRQvzLa0crjEq6ACy9quZpqGG13RYMzEyVYgX2f9tTyYWtlSRGOmjOh706ybjWKprR0vz32X8vSJL5knW33pn9LxRJ8ownV7iVdQQdPlPKbHBcvTF8WULRy/pphFMPZvTCg+XGB3WJsD/wQkjubHKa2VZiwdePhOGzmJSPKHdwNlcpybKE7nQ7dKw3kxWPdmsWfhxwH7lUxBQtEhcDVQ== a.posadov@baum.ru"
+
+max: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDbVqd+clXxlK/PNg6EdxlnI7RMHd0fgxJOvGoznQbhF16yO5T58SfLev8/0tjKDUfMX+rajI5A5GtfwKhYc7iiw7ewsYY7L5LvbxmU7C8b9crES2fFRr52QonCmin+Cm26HZv/rEJnpn5NVgvHeOm/csUDoZUaEF0udqzC/5/RPngVyhrkldoHphxi8t+tAEUoFcIJVe6ssfMekaLnB3ydAUDsfVPH1blyP4fMQW+0cj1/irxrcZg/8rNzh5+Ib9nIW+7OOFKW0WbywhXmIgYYlh60MTSOhXk2wDSTNjwy0o+Fk3iG5/Ho7G0o93oT84iNx9TeumOnU6FTOK8kY6UP max@max-ubuntu"
+
+dmitriy: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQC07Er+SG3AcNrw6NqLT0ceowAQ0ArpHgRCOr3EZvQ0MZDBThyGi5g2PSii2irkdcNUHwFRvQFOmuIBvJyu4UATq6axU5CZt9n71qEDh3hmKO+delREmzYVualaZ6sVsDfU7vwgPxm9Fet87xV6mJGH42E3opBxVArmytebnP/IGF8CndCpRCIE1d+JVLcviEP/eZJ6hPonXEsmPQN5HSbDdKxkSK4K7qT1/KBl7cEnHzneLRVsHvNGIT1HUBBqX3CwThgbevo85XovndLbZqjiAIrJ+iyqn8NjoIo9PpKDKJlbKfzvDeKa+mBxWXp+DG1Ww2inzfjuQ5QEYf+uryiPLmDyj3BViwd9MQBqTUxh+pXzmDcF56Beg7XIOx/AlWNAE4Lx69LXGPM2pVsUm7UVu31qaox0l8ONkjHi984ucjwRJBzNntM8De/0zgOYUt9wx2upLtH1xaQo4SDHXR8K8FKCDxFH+GUmOHVaZ/1nVooE5641BpHN7CktttiQyv0= dmitriy@MacBook-Pro-Dmitrij.local"
+
+danil: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCw7kz5f9CDxUIWK9JqNG26dwkOjlR0Q9cdXYUGK3Uqjvd45uab0v30nEK0heS1JPD5L3Q50gecSR/KjtNFA04Kmx3GG/ahAPS+0bbCHHOYOYsInHSrZJCU1qaNyvB8OcmEGeJsHWdRGTMbm+6IcqTt8tpMbu2E9TjBh45KU63Dnetc+E6vJ52pJCBUHxw2SXwY9Zm+nDmtgmmjoARsq86AC8/8XY5W0Qp+5QiJC8VrO8HzbsCwDZ2HBM3RmPhF1itHjoyXcO3dKnHfvKkSzjMReXzTpfZxxvkEZzx0jqUepa1TY9B+pAjLqlgd78vVovekVTRWjt1GkRSR2V7Sqy/H hyperpc@DESKTOP-5TNIE0I"
+
+key_1gor: "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDEjBYMvDJVgoK76yQS98kkd5v34JXONbPYQWpMsuWrILoV3cdhK3sW9a0DmXIGHQHVu71l7Y5OrIHVNmxG8bLbrY9UkzXTJYJyhJcpkFveTJ7xJnTUfqZYZvKgeLLVUtXxatwyNf1zh35JDnZh4gohrA6k3POybso0AGKOhB0n8aAOpS6XDTvqyNRQlCASm2QhEUVbQGylToo6JKd8nMKuK+V2iMZANZzV1rwHfa5fqYgGYyi1D4l8pnkkLW/hM9ms0zF2PykTxpHkw63HF6W2UhhAU5DrWJADkUoIIQMopAv0lk7tL/T6eURbyP0n7GOtIGEtTkvkPHnaFFW46hI+vTQD6QAKQU6+8gaXsV761iTSTzbdnp7+n7LQ6x8uf9/6OBj+HrlVMvRN5Zbn0VsVoSLinoKqqP6cxZfdEfiHCtR6D2aRbFvFqjgYBAYa0coE3WX9EclMVPmBUX1M8qsfsoJkQYpDLArTJdqSS4J3nJcfH36SzWvV1/6hbXkY/Mc= 1gr@DESKTOP-6FM8TAS"
+
+services:
+  back8088:
+    port: 8088
+    name: back8088
+  back5000:
+      port: 5000
+      name: back5000
+  nginx80:
+          port: 80
+          name: nginx80

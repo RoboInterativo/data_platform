@@ -1,0 +1,74 @@
+---
+- name: Test Keepalived failover
+  hosts: keepalived_nodes
+  become: yes
+  # vars:
+  #   vip: "192.168.1.100"  # Виртуальный IP
+  #   hostparam: "keycloak"  # Имя контейнера Keycloak
+  tasks:
+
+    - name: Start Keycloak containers
+      docker_container:
+        name: "{{ hostparam }}"
+        state: started
+
+    - name: Ensure VIP is accessible
+      uri:
+        url: "http://{{ virtual_ip }}:8080/realms/master/.well-known/openid-configuration"
+        method: GET
+        status_code: 200
+      delegate_to: localhost
+
+    - name: Stop Keycloak container on node1
+      docker_container:
+        name: "{{ hostparam }}"
+        state: stopped
+      when: inventory_hostname == "keycloak-node1"
+
+    - name: Wait for virtual_ip to failover
+      wait_for:
+        host: "{{ virtual_ip }}"
+        port: 8080
+        state: started
+        timeout: 60
+      delegate_to: localhost
+
+    - name: Ensure virtual_ip is accessible after failover
+      uri:
+        url: "http://{{ virtual_ip }}:8080/realms/master/.well-known/openid-configuration"
+        method: GET
+        status_code: 200
+      delegate_to: localhost
+
+    # - name: Start Keycloak container on node1
+    #   docker_container:
+    #     name: "{{ hostparam }}"
+    #     state: started
+    #   when: inventory_hostname == "keycloak-node1"
+
+    - name: Stop Keycloak containers on node1 and node2
+      docker_container:
+        name: "{{ hostparam }}"
+        state: stopped
+      when:  inventory_hostname == "keycloak-node2"
+
+    - name: Wait for virtual_ip to failover again
+      wait_for:
+        host: "{{ virtual_ip }}"
+        port: 8080
+        state: started
+        timeout: 120
+      delegate_to: localhost
+
+    - name: Ensure virtual_ip is accessible after second failover
+      uri:
+        url: "http://{{ virtual_ip }}:8080/realms/master/.well-known/openid-configuration"
+        method: GET
+        status_code: 200
+      delegate_to: localhost
+
+    - name: Start Keycloak containers on node1 and node2
+      docker_container:
+        name: "{{ hostparam }}"
+        state: started
+      when: inventory_hostname == "keycloak-node1" or inventory_hostname == "keycloak-node2"

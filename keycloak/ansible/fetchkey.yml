@@ -1,0 +1,47 @@
+---
+- name: newservers_init
+  hosts: 172.16.1.153
+  become: yes
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: copy ssh
+      ansible.builtin.fetch:
+        src: "/root/.ssh/{{ item}}"
+        dest: "files/{{item }}"
+        flat: yes
+      with_items:
+       - id_rsa
+       - id_rsa.pub
+
+
+- name: copy
+  hosts: kafka
+  become: yes
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: directory
+      ansible.builtin.file:
+        path:  /root/.ssh
+        state: directory
+        mode: '0600'
+
+
+
+    - name: copy ssh
+      ansible.builtin.copy:
+        src: "{{item }}"
+        dest: "/root/.ssh/{{ item}}"
+        remote_src: no
+        mode: '0600'
+
+      with_items:
+       - id_rsa
+       - id_rsa.pub

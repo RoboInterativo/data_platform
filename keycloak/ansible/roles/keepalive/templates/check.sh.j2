@@ -1,0 +1,3 @@
+#!/bin/bash
+nc -z localhost {{ services[item].port }} || exit 1
+exit 0

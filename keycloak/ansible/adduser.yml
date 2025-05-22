@@ -1,0 +1,134 @@
+
+---
+- name: Create a new user and add to sudoers
+  hosts: testvm
+  become: yes  # Выполнять задачи с правами суперпользователя
+  vars:
+    username: "admin"  # Имя нового пользователя
+    password: "qwer1234"  # Пароль нового пользователя (рекомендуется использовать vault для безопасности)
+    rootpass: "M9da5ebr"
+    # ssh_key: "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAr..."  # Опционально: SSH-ключ для пользователя
+
+  tasks:
+
+
+
+    - name: Установить несколько пакетов
+      ansible.builtin.apt:
+        name:
+          - language-pack-en  # для английской локали (en_US)
+          - language-pack-ru  # если нужна русская (ru_RU)
+
+    - name: Copy
+      ansible.builtin.copy:
+        src: locale.gen
+        dest: /etc/locale.gen
+
+    - name:  locale-gen
+      ansible.builtin.command:
+        cmd:   locale-gen
+          #dpkg-reconfigure locales
+    - name: test locale
+      ansible.builtin.command:
+        cmd: locale -a
+
+    - name: "Create the ROOT password"
+      ansible.builtin.user:
+        name: "root"
+        password: "{{ rootpass | password_hash('sha512') }}"
+
+
+    - name: "Ensure /etc/ssh/sshd_config root permit"
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "PermitRootLogin prohibit-password"
+        #validate: 'visudo -cf %s'
+        state: absent
+    - name: "Ensure /etc/ssh/sshd_config root permit"
+      ansible.builtin.lineinfile:
+        path: /etc/ssh/sshd_config
+        line: "PermitRootLogin yes"
+        #validate: 'visudo -cf %s'
+        state: present
+
+
+    - name: Restart ssh
+      service:
+        name: ssh
+        state: restarted
+
+    - name: " Create the user {{item}}"
+      ansible.builtin.user:
+        name: "{{ item }}"
+        password: "{{ password | password_hash('sha512') }}"
+        groups: sudo
+        append: yes
+        shell: /bin/bash
+        create_home: yes
+        home: /home/{{ item }}
+      with_items: "{{ userlist}}"
+
+
+
+    - name: "Ensure sudoers file allows passwordless sudo for{{item}}"
+      ansible.builtin.lineinfile:
+        path: /etc/sudoers
+        line: "{{ item }} ALL=(ALL) NOPASSWD:ALL"
+        validate: 'visudo -cf %s'
+        state: present
+      with_items: "{{ userlist}}"
+
+
+    - name: .ssh folder
+      ansible.builtin.file:
+        path: "/home/{{item}}/.ssh"
+        state:   directory
+        owner: "{{item }}"
+        group: "{{item }}"
+        mode: '0700'
+      with_items: "{{userlist}}"
+        # - mkyzyma
+        # - max
+        # - aposadov
+        # - dmitriy
+        # - danil
+        # - 1gor
+
+    - name: "Add a key for {{item.name }} on server"
+      ansible.builtin.lineinfile:
+        path: /home/{{item.name}}/.ssh/authorized_keys
+        line: "{{item.key}}"
+        create: yes
+        owner: "{{item.name }}"
+        group: "{{item.name }}"
+        mode: '0400'
+      with_items:
+          - name: max
+            key: "{{max}}"
+
+          - name: max
+            key: "{{alexkey}}"
+#------------------------------------
+          - name: aposadov
+            key: "{{aposadov}} "
+
+          - name: mkyzyma
+            key: "{{mkyzyma}}"
+#-------------------------------------
+          - name: dmitriy
+            key: "{{dmitriy}}"
+
+          - name: dmitriy
+            key: "{{alexkey}}"
+
+          - name: danil
+            key: "{{danil}}"
+
+          - name: 1gr
+            key: "{{key_1gor}}"
+
+    # - name: Add SSH key for the user (optional)
+    #   ansible.builtin.authorized_key:
+    #     user: "{{ username }}"
+    #     key: "{{ ssh_key }}"
+    #     state: present

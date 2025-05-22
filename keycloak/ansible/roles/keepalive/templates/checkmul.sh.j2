@@ -1,0 +1,5 @@
+#!/bin/bash
+{% for item in services %}
+nc -z localhost {{ services[item].port }} || exit 1
+{% endfor %}
+exit 0

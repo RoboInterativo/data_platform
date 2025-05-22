@@ -1,0 +1,6 @@
+---
+- name: Configure Keepalived for high availability
+  hosts: keepalived_nodes
+  become: yes
+  roles:
+    - keepalive

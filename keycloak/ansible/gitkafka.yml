@@ -1,0 +1,49 @@
+---
+- name: newservers_init
+  hosts: kafka
+  become: yes
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: Git checkout
+      ansible.builtin.git:
+        accept_hostkey: yes
+        repo: 'git@mds-gitlab.npobaum.ru:mds/infra.git'
+        dest: /opt/infra
+
+    - name: directory
+      ansible.builtin.file:
+        path:  /var/lib/kafka
+        state: directory
+        mode: '0777'
+
+
+    - name: directory
+      ansible.builtin.file:
+        path:  /var/lib/kafka
+        state: directory
+        mode: '0777'
+
+    - name: DEBUG
+      debug:
+        var: "{{ ansible_hostname}}"
+
+
+    - name: RUN
+      ansible.builtin.shell:
+        cmd: docker-compose up -d
+        chdir: "/opt/infra/{{ ansible_hostname |string }}"
+
+        # version: release-0.22
+    #
+    # - name: Run `docker-compose up` again
+    #   community.docker.docker_compose:
+    #     project_src: flask
+    #     build: no
+    #   register: output
+    #
+    # - ansible.builtin.debug:
+    #     var: output

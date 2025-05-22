@@ -1,0 +1,107 @@
+stages:
+  - buildansible
+  - deploy
+
+variables:
+
+    PLAYBOOK: back.yml
+    DOCKER_AUTH_CONFIG: |
+          {
+          	"auths": {
+          		"docker-int.robointerativo.org": {
+          			"auth": "bmV4dXN1c2VyOnRDJTNRQTk1SDBTZzIyMHg="
+          		},
+            	"docker-proxy.robointerativo.org": {
+          			"auth": "bmV4dXN1c2VyOnRDJTNRQTk1SDBTZzIyMHg="
+          		}
+          	}
+          }
+
+buldansible:
+  stage: buildansible
+  # cache:
+  #   key: NPM_BUILD  # a single-key-4-all-branches for install jobs
+  #   paths:
+  #     - build/
+  # needs:
+  #     # does not need node_modules so don't state install as a need
+  #   - job: build
+  #     artifacts: true
+
+  when: manual
+  image:
+    name: gcr.io/kaniko-project/executor:v1.14.0-debug
+    entrypoint: [""]
+  before_script:
+    - pwd
+    - ls -li
+    - chmod +x ./create.sh
+    - pwd && ls
+    - ./create.sh
+    - cat config.json
+    - cat config.json
+    - cp config.json /kaniko/.docker
+    - ls /kaniko/.docker
+    # - echo ls build
+    # - ls build
+
+  script:
+    - /kaniko/executor --help
+    - /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --skip-tls-verify
+      --skip-tls-verify-pull
+      --insecure
+      --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
+      --destination "mds-gitlab.npobaum.ru:5050/mds/infra:$CI_COMMIT_REF_SLUG"
+        #$CI_COMMIT_SHORT_SHA"
+    - echo $CI_COMMIT_SHORT_SHA
+
+
+
+  tags:
+    - docker2
+
+deploy:
+  stage: deploy
+  when: manual
+  image:
+    name:  ubuntu:22.04
+  variables:
+      ANSIBLE_HOST_KEY_CHECKING: 'false'
+      ANSIBLE_FORCE_COLOR: 'true'
+    #
+
+  script:
+    - chmod 600 admin
+    - "ls -li"
+    - "pwd"
+    - "echo $USER && users"
+    - "ansible --version"
+    - "ansible-playbook  -vv -u root -i inventories/dev/hosts   --key-file admin $PLAYBOOK "
+
+
+pingservers:
+  stage: pingservers
+  when: manual
+  image:
+    name:  ubuntu:24.04
+  variables:
+      ANSIBLE_HOST_KEY_CHECKING: 'false'
+      ANSIBLE_FORCE_COLOR: 'true'
+      PLAYBOOK: test.yml
+    #
+
+  script:
+    - chmod 600 admin
+    - "ls -li"
+    - "pwd"
+    - "echo $USER && users"
+    - "ansible --version"
+    - "ansible-playbook  -vv -u root -i inventories/dev/hosts   --key-file admin $PLAYBOOK "
+
+
+
+
+  tags:
+    - stage

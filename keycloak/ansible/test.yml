@@ -1,0 +1,17 @@
+---
+- name: newservers_init
+  hosts: keycloak
+
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    # - name: add hosts
+    #   blockinfile:
+    #     path: /etc/hosts
+    #     block: |
+    #       172.16.1.246 keycloak
+    #       172.16.1.165 keycloak2
+    #       172.16.1.166 keycloak3

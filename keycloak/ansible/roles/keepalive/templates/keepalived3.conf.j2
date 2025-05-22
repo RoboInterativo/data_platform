@@ -1,0 +1,53 @@
+global_defs {
+    enable_script_security
+}
+
+# Проверка Keycloak
+vrrp_script check_keycloak {
+    script "/usr/local/bin/check_keycloak.sh"
+    user root
+    interval 2  # Уменьшенный интервал для быстрого детектирования
+    timeout 1
+    weight -20  # Критический вес для немедленного перехода в FAULT
+    fall 2       # 2 неудачные проверки подряд
+    rise 1       # 1 успешная для возврата
+}
+
+{% for service_name in services %}
+vrrp_script check_{{ service_name }} {
+    script "/usr/local/bin/check_{{ service_name }}.sh"
+    user root
+    interval 2  # Уменьшенный интервал для быстрого детектирования
+    timeout 1
+    weight -253  # Критический вес для немедленного перехода в FAULT
+    fall 2       # 2 неудачные проверки подряд
+    rise 1       # 1 успешная для возврата
+}
+{% endfor %}
+
+
+
+vrrp_instance VI_1 {
+    state {{ state }}
+    interface {{ interface }}
+    virtual_router_id {{ virtual_router_id }}
+    priority {{ priority }}
+    advert_int 1
+
+    authentication {
+        auth_type PASS
+        auth_pass {{ auth_pass }}
+    }
+
+    virtual_ipaddress {
+        {{ virtual_ip }}
+    }
+
+    # Отслеживаем все скрипты
+    track_script {
+        check_keycloak
+        {% for service_name in services %}
+        check_{{ service_name }}
+        {% endfor %}
+    }
+}

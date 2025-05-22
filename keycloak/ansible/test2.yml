@@ -1,0 +1,24 @@
+---
+- name: newservers_init
+  hosts: keycloak
+  become: yes
+
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: Git checkout
+      ansible.builtin.git:
+        repo: 'git@mds-gitlab.npobaum.ru:a.shilo/infra.git'
+        dest: /opt/infra
+        # version: release-0.22
+    # 
+    # - name: Run `docker-compose up` again
+    #   community.docker.docker_compose:
+    #     project_src: flask
+    #     build: no
+    #   register: output
+    #
+    # - ansible.builtin.debug:
+    #     var: output

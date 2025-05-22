@@ -1,0 +1,38 @@
+[keycloak]
+
+keycloak2 natsdir=nats2 keycloakdir=keycloak2 ansible_host=172.16.1.165
+keycloak3 natsdir=nats3 keycloakdir=keycloak3 ansible_host=172.16.1.166
+keycloak1 natsdir=nats1 keycloakdir=keycloak1 ansible_host=172.16.1.153
+
+[testvm]
+172.16.1.105
+172.16.1.106
+172.16.1.166
+172.16.1.165
+172.16.1.153
+
+[sonar]
+172.16.1.181
+[kklock]
+172.16.1.165
+172.16.1.166
+172.16.1.153
+
+[mons]
+172.16.1.78
+[kafka]
+172.16.1.91
+#172.16.1.50
+#172.16.1.51
+
+[keepalived_nodes]
+#
+keycloak-node1 hostparam=keycloak-node1 ansible_host=172.16.1.153 priority=100 state=BACKUP
+keycloak-node2 hostparam=keycloak-node2 ansible_host=172.16.1.165 priority=100 state=BACKUP
+keycloak-node3 hostparam=keycloak-node3 ansible_host=172.16.1.166 priority=100 state=BACKUP
+
+[keepalived_nodes:vars]
+virtual_ip=172.16.1.247
+interface=ens33
+virtual_router_id=51
+auth_pass=P@ssw0rd

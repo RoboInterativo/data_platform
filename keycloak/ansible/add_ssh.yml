@@ -1,0 +1,19 @@
+---
+- name: newservers_all
+  hosts: keycloak
+  become: yes
+
+  tasks:
+    - name: Run
+      ping:
+
+    - name: Add a key on server
+      ansible.builtin.lineinfile:
+        path: /root/.ssh/authorized_keys
+        line: "{{item}}"
+        create: yes
+      with_items:
+        - "{{admin_pub_key}}"
+        - "{{user1}}"
+        - "{{user2}} "
+        - "{{user3}}"

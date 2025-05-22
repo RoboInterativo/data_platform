@@ -1,0 +1,11 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: flask-servicebot-service
+spec:
+  selector:
+    app: bot
+  ports:
+  - protocol: TCP
+    port: 8000
+    targetPort: 8000

@@ -1,0 +1,31 @@
+---
+- name: newservers_init
+  hosts: kafka
+  become: yes
+
+  tasks:
+    - name: Run ping
+      ping:
+
+    - name: Add hosts to /etc/hosts
+      blockinfile:
+        path: /etc/hosts
+        block: |
+          172.16.1.91 msgbus-node1
+          172.16.1.50  msgbus-node2
+          172.16.1.51 msgbus-node3
+
+    - name: Set hostname to msgbus-node1
+      hostname:
+        name: msgbus-node1
+      when: inventory_hostname == 'kafka'
+
+    - name: Set hostname to msgbus-node2
+      hostname:
+        name: msgbus-node2
+      when: inventory_hostname == 'kafka2'
+
+    - name: Set hostname to msgbus-node3
+      hostname:
+        name: msgbus-node3
+      when: inventory_hostname == 'kafka3'
