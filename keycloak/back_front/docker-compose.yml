@@ -47,6 +47,7 @@ services:
     user: root
     container_name: openldap
     # network_mode: host
+    hostname: openldap
     restart: always
     environment:
 
