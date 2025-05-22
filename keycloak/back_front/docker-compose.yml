@@ -63,6 +63,7 @@ services:
       - ./ldap:/bitnami/openldap
 
   postgresql:
+    user: 1001  #
     image: bitnami/postgresql:latest
     container_name: postgresql
     environment:
