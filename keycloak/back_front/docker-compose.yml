@@ -7,7 +7,7 @@ services:
     restart: always
 
     container_name: nginxnode
-    # ports:
+    ports:
       - "80:80"
     environment:
      - client_auth_basic=bXljbGllbnQ6djdQVUJOeXIzVEI5RnB3ak8xZ1BiTTJyREEwRUxG
@@ -29,7 +29,6 @@ services:
     #   - keycloak-node2
     # network_mode: host
   back:
-
     build:
       context: back
       dockerfile: .
