@@ -31,7 +31,7 @@ services:
   back:
     build:
       context: ./back
-      dockerfile: .
+      # dockerfile: .
 
     container_name: back
     hostname: back
