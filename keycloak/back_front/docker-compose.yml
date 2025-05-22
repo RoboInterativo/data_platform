@@ -72,7 +72,7 @@ services:
       - POSTGRESQL_PASSWORD=keycloak_password
     volumes:
       # - postgresql_data:/bitnami/postgresql
-      - /opt/pgdata:/bitnami/postgresql
+      - /opt/pgdata:/bitnami/postgresql/data
     network_mode: host
     restart: always
 
