@@ -30,7 +30,7 @@ services:
     # network_mode: host
   back:
     build:
-      context: back
+      context: ./back
       dockerfile: .
 
     container_name: back
