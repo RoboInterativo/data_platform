@@ -1,0 +1,11 @@
+services:
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner-docker
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config.toml:/etc/gitlab-runner/config.toml
+      # - ./docker-daemon.json:/etc/docker/daemon.json
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
