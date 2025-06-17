@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name localhost ;
+    server_name test.geekslore.ru ;
     root /var/www;
 
     location ~ ^/api/realms/([^/]+)/protocol/openid-connect/token/introspect {
