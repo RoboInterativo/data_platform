@@ -41,26 +41,26 @@ services:
     environment:
       - PORT=8082
 
-  openldap:
-    image: bitnami/openldap:2.5.16
-    user: root
-    container_name: openldap
-    network_mode: host
-    hostname: openldap
-    restart: always
-    environment:
-
-      - BITNAMI_DEBUG=true
-      - LDAP_ROOT=dc=example,dc=com
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
-
-    ports:
-      - "389:1389"
-      - "636:1636"
-    volumes:
-      # - openldap_data:/bitnami/openldap
-      - ./ldap:/bitnami/openldap
+  # openldap:
+  #   image: bitnami/openldap:2.5.16
+  #   user: root
+  #   container_name: openldap
+  #   network_mode: host
+  #   hostname: openldap
+  #   restart: always
+  #   environment:
+  #
+  #     - BITNAMI_DEBUG=true
+  #     - LDAP_ROOT=dc=example,dc=com
+  #     - LDAP_ADMIN_USERNAME=admin
+  #     - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
+  #
+  #   ports:
+  #     - "389:1389"
+  #     - "636:1636"
+  #   volumes:
+  #     # - openldap_data:/bitnami/openldap
+  #     - ./ldap:/bitnami/openldap
 
   postgresql:
     user: root  #
