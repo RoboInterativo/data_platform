@@ -1,0 +1,76 @@
+package com.example.keycloak;
+
+import jakarta.ws.rs.*;
+import jakarta.ws.rs.core.*;
+import org.keycloak.models.*;
+import org.keycloak.services.resource.RealmResourceProvider;
+import org.keycloak.services.managers.AppAuthManager;
+import org.keycloak.services.managers.AuthenticationManager.AuthResult;
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class UsersWithGroupsResource implements RealmResourceProvider {
+
+    private final KeycloakSession session;
+
+    public UsersWithGroupsResource(KeycloakSession session) {
+        this.session = session;
+    }
+
+    @Override
+    public Object getResource() {
+        return this; // Возвращаем себя как JAX-RS ресурс
+    }
+
+    @GET
+    @Path("") // Пустой Path, так как он уже есть в getId() фабрики
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getUsersWithGroups() {
+        try {
+            AuthResult auth = new AppAuthManager.BearerTokenAuthenticator(session)
+                .authenticate();
+
+            if (auth == null) {
+                throw new NotAuthorizedException("Invalid token");
+            }
+
+            RealmModel realm = session.getContext().getRealm();
+            List<UserModel> users = session.users().searchForUserStream(realm, Map.of())
+                .collect(Collectors.toList());
+
+            List<Map<String, Object>> result = users.stream()
+                .map(this::mapUserWithGroups)
+                .collect(Collectors.toList());
+
+            return Response.ok(result).build();
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                   .entity(Map.of("error", e.getMessage()))
+                   .build();
+        }
+    }
+
+    private Map<String, Object> mapUserWithGroups(UserModel user) {
+        Map<String, Object> userData = new HashMap<>();
+        userData.put("id", user.getId());
+
+        // Добавляем статус активности (включен/выключен)
+        userData.put("enabled", user.isEnabled()); // Правильное имя метода - isEnabled()
+
+        userData.put("username", user.getUsername());
+
+        // Добавляем дату создания
+        userData.put("createdTimestamp", user.getCreatedTimestamp());
+
+
+
+        userData.put("groups", user.getGroupsStream()
+            .map(group -> Map.of("id", group.getId(), "name", group.getName()))
+            .collect(Collectors.toList()));
+
+        return userData;
+    }
+
+    @Override
+    public void close() {}
+}
