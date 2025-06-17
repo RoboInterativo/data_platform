@@ -1,0 +1,511 @@
+server {
+    listen 80;
+    server_name localhost ;
+    root /var/www;
+
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/token/introspect {
+        # Основные настройки прокси
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/token/introspect;
+        proxy_http_version 1.1;
+
+        # Обязательные заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Критически важные настройки для POST-запросов
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Особенности для OAuth2/introspect
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header Accept "application/json";
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+        # Лимиты и таймауты
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+
+        # Логирование
+        access_log /var/log/nginx/keycloak_access.log;
+        error_log /var/log/nginx/keycloak_error.log;
+    }
+
+#------------------
+
+location ~ ^/api/realms/([^/]+)/users-with-groups {
+    proxy_pass http://127.0.0.1:8080/realms/$1/users-with-groups;
+    proxy_http_version 1.1;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header Authorization $http_authorization;
+
+    # CORS настройки (аналогичные вашим текущим)
+    if ($request_method = 'OPTIONS') {
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS';
+        add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type';
+        add_header 'Access-Control-Max-Age' 1728000;
+        add_header 'Content-Type' 'text/plain; charset=utf-8';
+        add_header 'Content-Length' 0;
+        return 204;
+    }
+
+    add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+    add_header 'Access-Control-Allow-Credentials' 'true' always;
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS' always;
+    add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type' always;
+}
+#---------------------
+    #location ~ ^/api/admin/realms/([^/]+)/[^/]+(/.*)?$ {
+    #    proxy_pass http://127.0.0.1:8080/admin/realms/$1/$2$3$is_args$args;
+     location ~ ^/api/admin/realms/([^/]+)/(users|userinfo|groups)(/.*)?$ {
+         proxy_pass http://127.0.0.1:8080/admin/realms/$1/$2$3$is_args$args;
+        proxy_http_version 1.1;
+        # proxy_intercept_errors off;  # Отключаем перехват ошибок от бэкенда
+        # proxy_hide_header 'Access-Control-Allow-Origin';  # Скрыть заголовок от Keycloak
+        # proxy_hide_header 'Access-Control-Allow-Methods';
+        # proxy_hide_header 'Access-Control-Allow-Headers';
+        # Обязательные заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+
+        # Настройки для POST-запросов
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Особенности для OAuth2
+        proxy_set_header Accept "application/json";
+
+        # Лимиты и таймауты
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+          # Скрываем CORS-заголовки от Keycloak, чтобы не было дублирования
+          proxy_hide_header 'Access-Control-Allow-Origin';
+          proxy_hide_header 'Access-Control-Allow-Methods';
+          proxy_hide_header 'Access-Control-Allow-Headers';
+          proxy_hide_header 'Access-Control-Allow-Credentials';
+          error_page 401 = @userinfoerror401;
+        # Логирование
+        access_log /var/log/nginx/keycloak_access.log full_tracking;
+        error_log /var/log/nginx/keycloak_error.log;
+    }
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/(token|userinfo) {
+        # Основные настройки прокси
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/$2;
+        proxy_http_version 1.1;
+        # proxy_intercept_errors off;  # Отключаем перехват ошибок от бэкенда
+        # proxy_hide_header 'Access-Control-Allow-Origin';  # Скрыть заголовок от Keycloak
+        # proxy_hide_header 'Access-Control-Allow-Methods';
+        # proxy_hide_header 'Access-Control-Allow-Headers';
+        # Обязательные заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+
+        # Настройки для POST-запросов
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Особенности для OAuth2
+        proxy_set_header Accept "application/json";
+
+        # Лимиты и таймауты
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+          # Скрываем CORS-заголовки от Keycloak, чтобы не было дублирования
+          proxy_hide_header 'Access-Control-Allow-Origin';
+          proxy_hide_header 'Access-Control-Allow-Methods';
+          proxy_hide_header 'Access-Control-Allow-Headers';
+          proxy_hide_header 'Access-Control-Allow-Credentials';
+          error_page 401 = @userinfoerror401;
+        # Логирование
+        access_log /var/log/nginx/keycloak_access.log full_tracking;
+        error_log /var/log/nginx/keycloak_error.log;
+    }
+
+#Валидация токена
+
+    location = /_validate_token {
+        internal;
+        proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/userinfo;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+
+    }
+
+
+
+    # Protected API
+    location /api/ctrl/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/ctrl/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+
+        error_page 401 = @error401;
+    }
+    location /api/hardware/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/hardware/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+        error_page 401 = @error401;
+    }
+    location /api/fc/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/fc/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+        error_page 401 = @error401;
+    }
+    location /api/iscsi/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/iscsi/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+        error_page 401 = @error401;
+    }
+    location /api/network/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/network/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+        error_page 401 = @error401;
+    }
+    location /api/net/ {
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/net/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+        error_page 401 = @error401;
+
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+
+    }
+    location /api/ {
+
+      # Улучшенные CORS заголовки
+        if ($request_method = 'OPTIONS') {
+            add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+            add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+            add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+            add_header 'Access-Control-Max-Age' 1728000;
+            add_header 'Content-Type' 'text/plain; charset=utf-8';
+            add_header 'Content-Length' 0;
+            return 204;
+        }
+
+        add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+        add_header 'Access-Control-Allow-Credentials' 'true' always;
+        add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+        add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+
+
+        auth_request /_validate_token;
+        auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:8088/api/;
+
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+
+            error_page 401 = @error401;
+    }
+    location @userinfoerror401 {
+        add_header 'Content-Type' 'application/json' always;
+        # add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+        # add_header 'Access-Control-Allow-Credentials' 'true' always;
+        # add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+        # add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+
+        return 401 '{"error": "Unauthorized", "message": "Invalid or missing token"}';
+    }
+    location @error401 {
+        add_header Content-Type application/json;
+        # Улучшенные CORS заголовки
+          if ($request_method = 'OPTIONS') {
+              add_header 'Access-Control-Allow-Origin' 'http://localhost:3000';
+              add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH';
+              add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With';
+              add_header 'Access-Control-Max-Age' 1728000;
+              add_header 'Content-Type' 'text/plain; charset=utf-8';
+              add_header 'Content-Length' 0;
+              return 204;
+          }
+
+          add_header 'Access-Control-Allow-Origin' 'http://localhost:3000' always;
+          add_header 'Access-Control-Allow-Credentials' 'true' always;
+          add_header 'Access-Control-Allow-Methods' 'GET, POST, OPTIONS, PUT, DELETE, PATCH' always;
+          add_header 'Access-Control-Allow-Headers' 'Authorization, Content-Type, X-Requested-With' always;
+
+
+        return 401 '{"error": "Unauthorized", "message": "Invalid or missing token"}';
+    }
+    location /socket.io/ {
+      # auth_request /_validate_token;
+      # auth_request_set $auth_status $upstream_status;
+
+        proxy_pass http://127.0.0.1:5000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        include /etc/nginx/cors.conf; # Add CORS support for WebSocket
+
+        # error_page 401 = @error401;
+    }
+  #     location /socket.io/ {
+  #     # Проверка токена
+  #     auth_request /_validate_token;
+  #     auth_request_set $auth_status $upstream_status;
+  #     error_page 401 = @error401;
+  #
+  #     # WebSocket
+  #     proxy_pass http://127.0.0.1:5000;
+  #     proxy_http_version 1.1;
+  #     proxy_set_header Upgrade $http_upgrade;
+  #     proxy_set_header Connection "Upgrade";
+  #     proxy_set_header Host $host;
+  #     proxy_set_header X-Real-IP $remote_addr;
+  #     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+  #     proxy_set_header Authorization $http_authorization;
+  #
+  #     # Таймауты
+  #     proxy_read_timeout 3600s;
+  #     proxy_connect_timeout 3600s;
+  #
+  #     # CORS
+  #     add_header 'Access-Control-Allow-Origin' '*';
+  #     add_header 'Access-Control-Allow-Methods' 'GET, POST,PUT, OPTIONS, PATCH, DELETE';
+  #     add_header 'Access-Control-Allow-Headers' 'Authorization, Upgrade, Connection';
+  # }
+
+    # Frontend
+    location / {
+        try_files $uri $uri/ /index.html;
+
+        location ~* \.(?:ico|css|js|gif|jpe?g|png|svg)$ {
+            expires 30d;
+            add_header Cache-Control "public";
+        }
+    }
+
+    # Block PHP outside allowed zones
+    location ~ ^/(?!wiki).*\.php$ {
+        return 404;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+}

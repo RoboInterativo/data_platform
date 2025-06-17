@@ -1,0 +1,214 @@
+server {
+    listen 80;
+    server_name localhost;
+
+    # Проксирование запросов к Keycloak
+    # location ~ ^/api/realms/([^/]+)/protocol/openid-connect/(token|userinfo) {
+    #     proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/$2;
+    #     proxy_set_header Host $host;
+    #     proxy_pass_request_body on;
+    #     proxy_set_header X-Real-IP $remote_addr;
+    #     proxy_set_header Authorization $http_authorization;
+    # }
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/token/introspect {
+        # Основные настройки прокси
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/token/introspect;
+        proxy_http_version 1.1;
+
+        # Обязательные заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Критически важные настройки для POST-запросов
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Особенности для OAuth2/introspect
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header Accept "application/json";
+
+        # Лимиты и таймауты
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+
+        # Логирование
+        access_log /var/log/nginx/keycloak_access.log;
+        error_log /var/log/nginx/keycloak_error.log;
+    }
+
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/(token|userinfo) {
+        # Основные настройки прокси
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/$2;
+        proxy_http_version 1.1;
+
+        # Обязательные заголовки
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Настройки для POST-запросов
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type $http_content_type;
+        proxy_set_header Content-Length $http_content_length;
+
+        # Особенности для OAuth2
+        proxy_set_header Accept "application/json";
+
+        # Лимиты и таймауты
+        proxy_connect_timeout 5s;
+        proxy_read_timeout 10s;
+
+        # Логирование
+        access_log /var/log/nginx/keycloak_access.log;
+        error_log /var/log/nginx/keycloak_error.log;
+    }
+    # Валидация токена
+    # location = /_validate_token {
+    #     internal;
+    #     proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/userinfo;
+    #     proxy_pass_request_body off;
+    #     proxy_set_header Content-Length "";
+    #
+    #     # Извлекаем токен из заголовка Authorization
+    #     set $clean_token "";
+    #     if ($http_authorization ~* "^Bearer\s+(.+)$") {
+    #         set $clean_token $1;
+    #     }
+    #
+    #     # Передаем токен в заголовке Authorization
+    #     proxy_set_header Authorization "Bearer $clean_token";
+    #   #  proxy_set_header Authorization $http_authorization;
+    # }
+    # Token validation endpoint
+    location = /_validate_token {
+        internal;
+        proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/userinfo;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Authorization $http_authorization;
+    }
+
+    # Защищенный API
+    location /api/ctrl/ {
+        auth_request /_validate_token;
+
+        # Возвращаем ошибки в JSON формате
+        error_page 401 = @error401;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/ctrl/;
+        proxy_set_header Authorization $http_authorization;
+        proxy_set_header Host $host;
+
+        # Добавляем CORS заголовки
+        add_header 'Content-Type' 'application/json' always;
+    }
+
+    location @error401 {
+        add_header 'Content-Type' 'application/json';
+        return 401 '{"error": "Unauthorized", "message": "Invalid or missing token"}';
+    }
+    # location /api/ctrl/ {
+    #     auth_request /_validate_token;
+    #     auth_request_set $auth_status $upstream_status;
+    #     error_page 401 = @error401;
+    #     proxy_pass http://127.0.0.1:8082/api/v1/ctrl/;
+    #     include /etc/nginx/cors.conf;
+    #     # Логирование
+    #     access_log /var/log/nginx/ctrl.log main;
+    #     error_log /var/log/nginx/ctrl_error.log warn;
+    # }
+
+    location @error401 {
+        return 401 '{"error": "Unauthorized"}';
+        add_header Content-Type application/json;
+    }
+}server {
+    listen 80;
+    server_name localhost;
+
+    # Отключаем обработку статики для API-запросов
+    location ~ ^/api/ {
+        try_files $uri @proxy_api;
+    }
+
+    location @proxy_api {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    #  Keycloak Token Endpoint (исправленный)
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/token$ {
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/token;
+        proxy_method POST;  # Явно указываем метод
+        proxy_pass_request_body on;
+        proxy_set_header Content-Type "application/x-www-form-urlencoded";
+        proxy_set_header Authorization "Basic bXljbGllbnQ6OW52N1BVQk55cjNUQjlGcHdqTzFnUGJNMnJEQTBFTEY=";
+    }
+
+    #  Keycloak Userinfo (для auth_request)
+    location ~ ^/api/realms/([^/]+)/protocol/openid-connect/userinfo$ {
+        proxy_pass http://127.0.0.1:8080/realms/$1/protocol/openid-connect/userinfo;
+        proxy_set_header Authorization $http_authorization;
+    }
+
+    #  Проверка токена (auth_request)
+    location = /api/_validate_token {
+        internal;
+        proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/userinfo;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Authorization $http_authorization;
+    }
+    #  Проверка токена (auth_request)
+    location = /api/validate_token/ {
+        # internal;
+        proxy_pass http://127.0.0.1:8080/realms/master/protocol/openid-connect/userinfo;
+        proxy_pass_request_body off;
+        proxy_set_header Content-Length "";
+        proxy_set_header Authorization $http_authorization;
+    }
+
+    # Защищенный эндпоинт /api/ctrl/
+    location /api/(ctrl|fc|hardware)/ {
+        auth_request /api/_validate_token;
+        auth_request_set $auth_status $upstream_status;
+        error_page 401 = @error401;
+
+        proxy_pass http://127.0.0.1:8082/api/v1/$1/;
+        include /etc/nginx/cors.conf;
+    }
+
+    # Остальные API (если нужно)
+    location /api/fc/ {
+        proxy_pass http://127.0.0.1:8082/api/v1/fc/;
+        include /etc/nginx/cors.conf;
+    }
+
+    location /api/hardware/ {
+        proxy_pass http://127.0.0.1:8082/api/v1/hardware/;
+        include /etc/nginx/cors.conf;
+    }
+
+    #  Обработчик 401
+    location @error401 {
+        add_header Content-Type application/json;
+        return 401 '{"error": "Unauthorized", "message": "Invalid or missing token"}';
+    }
+
+    #  Статика и фронтенд
+    location / {
+        root /var/www;
+        try_files $uri $uri/ /index.html;
+    }
+}
