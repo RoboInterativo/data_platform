@@ -1,0 +1,108 @@
+version: '3.8'
+
+services:
+
+
+  openldap:
+    image: bitnami/openldap:2.5.16
+    user: root
+    container_name: openldap
+    # network_mode: host
+    restart: always
+    environment:
+
+
+      - BITNAMI_DEBUG=true
+      # - LDAP_ADMIN_PASSWORD=adminpassword
+      # - LDAP_ROOT=dc=example,dc=com
+
+      - LDAP_ROOT=dc=example,dc=com
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
+
+      # - LDAP_ROOT=dc=example,dc=com
+      # - LDAP_ADMIN_USERNAME=admin
+      # - LDAP_ADMIN_PASSWORD=adminpassword  # Используйте ТОЛЬКО этот пароль
+      # - LDAP_USERS=user1,user2
+      # - LDAP_PASSWORDS=password1,password2
+      # - LDAP_ROOT=dc=example,dc=com
+      # - LDAP_ADMIN_USERNAME=admin
+      # - LDAP_ADMIN_PASSWORD=adminpassword
+      # - LDAP_USERS=user1,user2
+      # - LDAP_PASSWORDS=password1,password2
+      # - LDAP_ROOT_PASSWORD=rootpassword
+    ports:
+      - "389:1389"
+      - "636:1636"
+    volumes:
+      # - openldap_data:/bitnami/openldap
+      - /opt/ldap:/bitnami/openldap
+
+  # postgresql:
+  #   image: bitnami/postgresql:latest
+  #   container_name: postgresql
+  #   environment:
+  #     - POSTGRESQL_DATABASE=keycloak
+  #     - POSTGRESQL_USERNAME=keycloak_user
+  #     - POSTGRESQL_PASSWORD=keycloak_password
+  #   volumes:
+  #     # - postgresql_data:/bitnami/postgresql
+  #     - /opt/pgdata:/bitnami/postgresql
+  #   network_mode: host
+  #   restart: always
+
+  keycloak-node1:
+    image: bitnami/keycloak:latest
+    container_name: keycloak-node1
+    environment:
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      # Используем IP-адреса напрямую (замените на реальные)
+      - KEYCLOAK_DATABASE_HOST=172.16.1.2  # Основной хост (для совместимости)
+      - KC_DB_URL=jdbc:postgresql://172.16.1.165:5432,172.16.1.166:5432,172.16.1.167:5432/keycloak?targetServerType=master&loadBalanceHosts=true
+      - KEYCLOAK_DATABASE_PORT=5432
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      # - KEYCLOAK_DATABASE_USER=keycloak
+      # - KEYCLOAK_DATABASE_PASSWORD=keycloakpassword
+      - KEYCLOAK_DATABASE_USER=postgres
+      - KEYCLOAK_DATABASE_PASSWORD=yourpassword
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=adminpassword
+      - KEYCLOAK_HTTP_PORT=8080
+      - KEYCLOAK_HTTPS_PORT=8443
+      - KEYCLOAK_PROXY_ADDRESS_FORWARDING=true
+      - KEYCLOAK_CACHE=ispn
+      - JGROUPS_DISCOVERY_PROTOCOL=TCP
+      - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=172.16.1.165[7600],172.16.1.166[7600],172.16.1.167[7600]
+      # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
+    # ports:
+    #   - "8081:8080"
+    # depends_on:
+    #   - postgresql
+    network_mode: host
+    restart: always
+
+
+  # loadbalancer:
+  #   image: nginx:latest
+  #   container_name: loadbalancer
+  #   # ports:
+  #   #   - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - /var/www/docs:/var/www/docs
+  #   # depends_on:
+  #   #   - keycloak-node1
+  #   #   - keycloak-node2
+  #   network_mode: host
+
+# volumes:
+#   openldap_data:
+# #     driver: local
+#   postgresql_data:
+#     driver: local
+
+#networks:
+#  keycloak_network:
+#    driver: bridge

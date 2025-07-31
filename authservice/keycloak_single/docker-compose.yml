@@ -1,0 +1,128 @@
+version: '3.8'
+
+services:
+  back:
+    network_mode: host
+    build:
+      context: back
+      dockerfile: .
+
+  openresty:
+    network_mode: host
+    build:
+      context: openresty
+      dockerfile: .
+    volumes:
+      - ./conf/nginx.conf:/etc/nginx/nginx.conf
+
+  postgres1:
+    user: "999"
+    image: postgres:16.9
+    build: .
+    container_name: postgres1
+    environment:
+      - POSTGRES_USER=access_service
+      - POSTGRES_PASSWORD=strong_pass
+      - POSTGRES_DB=access_service
+      # DB_USER="access_service"
+      # DB_NAME="access_service"
+      # DB_PASSWORD="strong_pass"
+      # LINUX_USER="access_service"
+
+    volumes:
+    #   - ./patroni.yml:/etc/patroni/patroni.yml
+      - ./scripts:/opt/scripts
+      - /opt/pgdata:/var/lib/postgresql/data
+    network_mode: host
+
+  openldap:
+    image: bitnami/openldap:2.5.16
+    user: root
+    container_name: openldap
+    # network_mode: host
+    restart: always
+    environment:
+
+
+      - BITNAMI_DEBUG=true
+      # - LDAP_ADMIN_PASSWORD=adminpassword
+      # - LDAP_ROOT=dc=example,dc=com
+
+      - LDAP_ROOT=dc=example,dc=com
+      - LDAP_ADMIN_USERNAME=admin
+      - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
+
+      # - LDAP_ROOT=dc=example,dc=com
+      # - LDAP_ADMIN_USERNAME=admin
+      # - LDAP_ADMIN_PASSWORD=adminpassword  # Используйте ТОЛЬКО этот пароль
+      # - LDAP_USERS=user1,user2
+      # - LDAP_PASSWORDS=password1,password2
+      # - LDAP_ROOT=dc=example,dc=com
+      # - LDAP_ADMIN_USERNAME=admin
+      # - LDAP_ADMIN_PASSWORD=adminpassword
+      # - LDAP_USERS=user1,user2
+      # - LDAP_PASSWORDS=password1,password2
+      # - LDAP_ROOT_PASSWORD=rootpassword
+    ports:
+      - "389:1389"
+      - "636:1636"
+    volumes:
+      # - openldap_data:/bitnami/openldap
+      - /opt/ldap:/bitnami/openldap
+
+
+
+  keycloak-node1:
+    # image: bitnami/keycloak:26.2.5-debian-12-r3
+    image: "bitnami/keycloak:26.2.5"
+
+    container_name: keycloak-node1
+    environment:
+      - KC_HOSTNAME_STRICT=false
+      - KC_HOSTNAME_STRICT_HTTPS=false
+      - KC_HTTP_ENABLED=true
+      - KEYCLOAK_ENABLE_STATISTICS=true
+      - KC_HTTP_METRICS_ENABLED=true
+      - KEYCLOAK_DATABASE_HOST=127.0.0.1
+      - KEYCLOAK_DATABASE_PORT=5432
+      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_USER=access_service
+      - KEYCLOAK_DATABASE_PASSWORD=strong_pass
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=adminpassword
+      - KEYCLOAK_HTTP_PORT=8080
+      - KEYCLOAK_HTTPS_PORT=8443
+      - KEYCLOAK_PROXY_ADDRESS_FORWARDING=true
+      - KEYCLOAK_CACHE=ispn
+      # - JGROUPS_DISCOVERY_PROTOCOL=TCP
+      # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
+    # ports:
+    #   - "8081:8080"
+    # depends_on:
+    #   - postgresql
+    network_mode: host
+    restart: always
+
+
+  # loadbalancer:
+  #   image: nginx:latest
+  #   container_name: loadbalancer
+  #   # ports:
+  #   #   - "80:80"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf
+  #     - /var/www/docs:/var/www/docs
+  #   # depends_on:
+  #   #   - keycloak-node1
+  #   #   - keycloak-node2
+  #   network_mode: host
+
+# volumes:
+#   openldap_data:
+# #     driver: local
+#   postgresql_data:
+#     driver: local
+
+#networks:
+#  keycloak_network:
+#    driver: bridge

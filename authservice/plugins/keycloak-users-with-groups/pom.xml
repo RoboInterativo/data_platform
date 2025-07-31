@@ -1,0 +1,54 @@
+<project>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>com.example</groupId>
+  <artifactId>keycloak-users-with-groups</artifactId>
+  <version>1.0.0</version>
+
+  <properties>
+    <keycloak.version>26.0.0</keycloak.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+  </properties>
+
+  <dependencies>
+      <dependency>
+          <groupId>org.keycloak</groupId>
+          <artifactId>keycloak-core</artifactId>
+          <version>${keycloak.version}</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.keycloak</groupId>
+          <artifactId>keycloak-services</artifactId>
+          <version>${keycloak.version}</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>org.keycloak</groupId>
+          <artifactId>keycloak-server-spi</artifactId>
+          <version>${keycloak.version}</version>
+          <scope>provided</scope>
+      </dependency>
+      <dependency>
+          <groupId>jakarta.ws.rs</groupId>
+          <artifactId>jakarta.ws.rs-api</artifactId>
+          <version>3.1.0</version>
+          <scope>provided</scope>
+      </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.11.0</version>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>3.3.0</version>
+      </plugin>
+    </plugins>
+  </build>
+</project>

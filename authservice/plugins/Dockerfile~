@@ -1,0 +1,42 @@
+# Используем официальный образ Keycloak
+FROM bitnami/keycloak:26.2.5-debian-12-r3 as builder
+
+# Устанавливаем Maven для сборки плагина (если нужно собрать прямо в контейнере)
+USER root
+# RUN microdnf install -y maven
+RUN apt update && apt install maven -y
+# 1. Переключаемся на root для изменения прав
+
+
+# 2. Даем права на запись в /opt/keycloak
+RUN chmod -R 775  /opt/bitnami/keycloak && \
+    chown -R 1001:1001  /opt/bitnami/keycloak
+
+# 3. Возвращаемся к пользователю keycloak (UID 1000)
+
+
+
+# Копируем исходники плагина (если сборка внутри контейнера)
+# COPY ./keycloak-users-with-groups /opt/bitnami/keycloak/providers/
+
+# # ИЛИ копируем готовый JAR (если уже собрали локально)
+COPY keycloak-users-with-groups/tmp/keycloak-users-with-groups-1.0.0.jar \
+ /opt/bitnami/keycloak/providers/keycloak-users-with-groups-1.0.0.jar
+RUN chown 1001:root  /opt/bitnami/keycloak/providers/keycloak-users-with-groups-1.0.0.jar &&\
+chmod 644 /opt/bitnami/keycloak/providers/keycloak-users-with-groups-1.0.0.jar
+
+USER 1001
+
+# # Собираем Keycloak с плагином (обязательно!)
+RUN  /opt/bitnami/keycloak/bin/kc.sh build &&\
+ /opt/bitnami/keycloak/bin/kc.sh show-config
+#
+# # Финальный образ
+FROM bitnami/keycloak:26.2.5-debian-12-r3
+COPY --from=builder /opt/bitnami/keycloak/ /opt/bitnami/keycloak/
+#
+# # Порт Keycloak
+# EXPOSE 8080
+#
+# # Запуск Keycloak
+#ENTRYPOINT ["/opt/bitnami/keycloak/bin/kc.sh", "start-dev"]
