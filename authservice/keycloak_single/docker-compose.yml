@@ -3,10 +3,7 @@ version: '3.8'
 services:
   back:
     network_mode: host
-    build:
-      context: back
-      dockerfile: .
-
+    build: ./back
   openresty:
     network_mode: host
     build:
