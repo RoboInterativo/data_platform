@@ -26,9 +26,7 @@ services:
       # LINUX_USER="access_service"
 
     volumes:
-    #   - ./patroni.yml:/etc/patroni/patroni.yml
-      # - ./scripts:/opt/scripts
-      - /opt/pgdata:/var/lib/postgresql/data
+      - postgresql_data:/var/lib/postgresql/data
     network_mode: host
 
   openldap:
@@ -63,8 +61,8 @@ services:
       - "389:1389"
       - "636:1636"
     volumes:
-      # - openldap_data:/bitnami/openldap
-      - /opt/ldap:/bitnami/openldap
+      - openldap_data:/bitnami/openldap
+      # - /opt/ldap:/bitnami/openldap
 
 
 
@@ -113,11 +111,11 @@ services:
   #   #   - keycloak-node2
   #   network_mode: host
 
-# volumes:
-#   openldap_data:
-# #     driver: local
-#   postgresql_data:
-#     driver: local
+volumes:
+  openldap_data:
+    driver: local
+  postgresql_data:
+    driver: local
 
 #networks:
 #  keycloak_network:
