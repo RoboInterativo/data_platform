@@ -80,7 +80,7 @@ services:
       - KC_HTTP_METRICS_ENABLED=true
       - KEYCLOAK_DATABASE_HOST=127.0.0.1
       - KEYCLOAK_DATABASE_PORT=5432
-      - KEYCLOAK_DATABASE_NAME=keycloak
+      - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
       - KEYCLOAK_DATABASE_PASSWORD=strong_pass
       - KEYCLOAK_ADMIN_USER=admin
@@ -91,11 +91,11 @@ services:
       - KEYCLOAK_CACHE=ispn
       # - JGROUPS_DISCOVERY_PROTOCOL=TCP
       # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
-    # ports:
-    #   - "8081:8080"
+    ports:
+      - "8081:8080"
     # depends_on:
     #   - postgresql
-    network_mode: host
+    # network_mode: host
     restart: always
 
 
