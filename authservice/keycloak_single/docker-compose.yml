@@ -17,6 +17,7 @@ services:
     image: postgres:16.9
     build: .
     container_name: postgres1
+    hostname: postgres1
     environment:
       - POSTGRES_USER=access_service
       - POSTGRES_PASSWORD=strong_pass
@@ -28,7 +29,7 @@ services:
 
     volumes:
       - postgresql_data:/var/lib/postgresql/data
-    network_mode: host
+    # network_mode: host
 
   openldap:
     image: bitnami/openldap:2.5.16
@@ -58,9 +59,9 @@ services:
       # - LDAP_USERS=user1,user2
       # - LDAP_PASSWORDS=password1,password2
       # - LDAP_ROOT_PASSWORD=rootpassword
-    ports:
-      - "389:1389"
-      - "636:1636"
+    # ports:
+    #   - "389:1389"
+    #   - "636:1636"
     volumes:
       - openldap_data:/bitnami/openldap
       # - /opt/ldap:/bitnami/openldap
@@ -72,6 +73,7 @@ services:
     image: "bitnami/keycloak:26.2.5"
 
     container_name: keycloak-node1
+    hostname: keycloak
     environment:
       - KC_HTTPS_ENABLED=false
       - KC_HOSTNAME_STRICT=false
@@ -96,7 +98,7 @@ services:
     #   - "8081:8080"
     # depends_on:
     #   - postgresql
-    network_mode: host
+    # network_mode: host
     restart: always
 
 
