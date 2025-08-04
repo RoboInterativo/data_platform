@@ -18,6 +18,7 @@ services:
     build: .
     container_name: postgres1
     hostname: postgres1
+    network_mode: host
     environment:
       - POSTGRES_USER=access_service
       - POSTGRES_PASSWORD=strong_pass
