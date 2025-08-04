@@ -77,6 +77,7 @@ services:
     # hostname: keycloak
     environment:
       - KEYCLOAK_BIND_ADDRESS=0.0.0.0
+      - KC_PROXY=edge  # Критически важный параметр
       - KC_HTTPS_ENABLED=true  # Включаем HTTPS
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
