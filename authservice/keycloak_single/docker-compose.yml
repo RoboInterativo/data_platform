@@ -98,8 +98,8 @@ services:
       # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
     ports:
       - "8080:8080"
-    depends_on:
-      - postgresql1
+    # depends_on:
+    #   - postgresql1
 
     restart: always
 
