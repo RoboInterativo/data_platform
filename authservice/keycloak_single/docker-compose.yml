@@ -74,7 +74,7 @@ services:
     image: "bitnami/keycloak:26.2.5"
 
     container_name: keycloak-node1
-    hostname: keycloak
+    # hostname: keycloak
     environment:
       - KC_HTTPS_ENABLED=false
       - KC_HOSTNAME_STRICT=false
