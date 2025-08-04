@@ -92,7 +92,8 @@ services:
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
       - KEYCLOAK_DATABASE_PASSWORD=strong_pass
-
+      - KC_LOG_LEVEL=DEBUG
+      - JAVA_OPTS=-Dorg.jboss.logging.provider=slf4j
 
     ports:
       - "8443:8443"
