@@ -85,7 +85,7 @@ services:
       - KEYCLOAK_HTTPS_CERTIFICATE_KEY_FILE=/opt/bitnami/keycloak/certs/tls.key
       - KEYCLOAK_ADMIN_USER=admin
       - KEYCLOAK_ADMIN_PASSWORD=adminpassword
-      - KEYCLOAK_DATABASE_HOST=postgresql1
+      - KEYCLOAK_DATABASE_HOST=postgres1
       - KEYCLOAK_DATABASE_PORT=5432
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
