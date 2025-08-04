@@ -94,6 +94,7 @@ services:
 
     ports:
       - "8443:8443"
+      - "8080:8080"
     volumes:
       - /opt/certs:/opt/bitnami/keycloak/certs  # Подключаем сертификаты
     # depends_on:
