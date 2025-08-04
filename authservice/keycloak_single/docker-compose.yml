@@ -2,10 +2,10 @@ version: '3.8'
 
 services:
   back:
-    network_mode: host
+    # network_mode: host
     build: ./back
   openresty:
-    network_mode: host
+    # network_mode: host
     build:  ./openresty
     command: -c /nginx.conf
 
@@ -18,7 +18,7 @@ services:
     build: .
     container_name: postgres1
     hostname: postgres1
-    network_mode: host
+    # network_mode: host
     environment:
       - POSTGRES_USER=access_service
       - POSTGRES_PASSWORD=strong_pass
@@ -32,40 +32,40 @@ services:
       - postgresql_data:/var/lib/postgresql/data
     # network_mode: host
 
-  openldap:
-    image: bitnami/openldap:2.5.16
-    user: root
-    container_name: openldap
-    # network_mode: host
-    restart: always
-    environment:
-
-
-      - BITNAMI_DEBUG=true
-      # - LDAP_ADMIN_PASSWORD=adminpassword
-      # - LDAP_ROOT=dc=example,dc=com
-
-      - LDAP_ROOT=dc=example,dc=com
-      - LDAP_ADMIN_USERNAME=admin
-      - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
-
-      # - LDAP_ROOT=dc=example,dc=com
-      # - LDAP_ADMIN_USERNAME=admin
-      # - LDAP_ADMIN_PASSWORD=adminpassword  # Используйте ТОЛЬКО этот пароль
-      # - LDAP_USERS=user1,user2
-      # - LDAP_PASSWORDS=password1,password2
-      # - LDAP_ROOT=dc=example,dc=com
-      # - LDAP_ADMIN_USERNAME=admin
-      # - LDAP_ADMIN_PASSWORD=adminpassword
-      # - LDAP_USERS=user1,user2
-      # - LDAP_PASSWORDS=password1,password2
-      # - LDAP_ROOT_PASSWORD=rootpassword
-    # ports:
-    #   - "389:1389"
-    #   - "636:1636"
-    volumes:
-      - openldap_data:/bitnami/openldap
-      # - /opt/ldap:/bitnami/openldap
+  # openldap:
+  #   image: bitnami/openldap:2.5.16
+  #   user: root
+  #   container_name: openldap
+  #   # network_mode: host
+  #   restart: always
+  #   environment:
+  #
+  #
+  #     - BITNAMI_DEBUG=true
+  #     # - LDAP_ADMIN_PASSWORD=adminpassword
+  #     # - LDAP_ROOT=dc=example,dc=com
+  #
+  #     - LDAP_ROOT=dc=example,dc=com
+  #     - LDAP_ADMIN_USERNAME=admin
+  #     - LDAP_ADMIN_PASSWORD=adminpassword  # Только этот пароль!
+  #
+  #     # - LDAP_ROOT=dc=example,dc=com
+  #     # - LDAP_ADMIN_USERNAME=admin
+  #     # - LDAP_ADMIN_PASSWORD=adminpassword  # Используйте ТОЛЬКО этот пароль
+  #     # - LDAP_USERS=user1,user2
+  #     # - LDAP_PASSWORDS=password1,password2
+  #     # - LDAP_ROOT=dc=example,dc=com
+  #     # - LDAP_ADMIN_USERNAME=admin
+  #     # - LDAP_ADMIN_PASSWORD=adminpassword
+  #     # - LDAP_USERS=user1,user2
+  #     # - LDAP_PASSWORDS=password1,password2
+  #     # - LDAP_ROOT_PASSWORD=rootpassword
+  #   # ports:
+  #   #   - "389:1389"
+  #   #   - "636:1636"
+  #   volumes:
+  #     - openldap_data:/bitnami/openldap
+  #     # - /opt/ldap:/bitnami/openldap
 
 
 
@@ -76,13 +76,14 @@ services:
     container_name: keycloak-node1
     # hostname: keycloak
     environment:
+      - KEYCLOAK_BIND_ADDRESS=0.0.0.0
       - KC_HTTPS_ENABLED=false
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
       - KC_HTTP_ENABLED=true
       - KEYCLOAK_ENABLE_STATISTICS=true
       - KC_HTTP_METRICS_ENABLED=true
-      - KEYCLOAK_DATABASE_HOST=127.0.0.1
+      - KEYCLOAK_DATABASE_HOST=postgres1
       - KEYCLOAK_DATABASE_PORT=5432
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
@@ -95,11 +96,11 @@ services:
       - KEYCLOAK_CACHE=ispn
       # - JGROUPS_DISCOVERY_PROTOCOL=TCP
       # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
-    # ports:
-    #   - "8081:8080"
-    # depends_on:
-    #   - postgresql
-    network_mode: host
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgresql
+    
     restart: always
 
 
