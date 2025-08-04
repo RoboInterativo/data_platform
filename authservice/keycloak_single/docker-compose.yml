@@ -98,7 +98,7 @@ services:
     #   - "8081:8080"
     # depends_on:
     #   - postgresql
-    # network_mode: host
+    network_mode: host
     restart: always
 
 
