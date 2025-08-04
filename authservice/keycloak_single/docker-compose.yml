@@ -76,30 +76,27 @@ services:
     container_name: keycloak-node1
     # hostname: keycloak
     environment:
-      - KEYCLOAK_BIND_ADDRESS=0.0.0.0
-      - KC_PROXY=edge  # Критически важный параметр
-      - KC_HTTPS_ENABLED=true  # Включаем HTTPS
-      - KC_HOSTNAME_STRICT=false
+      - KC_HTTPS_ENABLED=true
+      - KC_HTTP_ENABLED=true  # С редиректом на HTTPS
       - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HTTP_ENABLED=false  # Отключаем HTTP
-      - KEYCLOAK_HTTPS_CERTIFICATE_FILE=/opt/bitnami/keycloak/certs/tls.crt
-      - KEYCLOAK_HTTPS_CERTIFICATE_KEY_FILE=/opt/bitnami/keycloak/certs/tls.key
+      - KC_PROXY=edge
+      - KEYCLOAK_HTTPS_CERTIFICATE_FILE=/certs/tls.crt
+      - KEYCLOAK_HTTPS_CERTIFICATE_KEY_FILE=/certs/tls.key
       - KEYCLOAK_ADMIN_USER=admin
       - KEYCLOAK_ADMIN_PASSWORD=adminpassword
       - KEYCLOAK_DATABASE_HOST=postgres1
       - KEYCLOAK_DATABASE_PORT=5432
-      - KEYCLOAK_HTTPS_PORT=8443
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
       - KEYCLOAK_DATABASE_PASSWORD=strong_pass
-      - KC_LOG_LEVEL=DEBUG
-      - JAVA_OPTS=-Dorg.jboss.logging.provider=slf4j
+      # - KC_LOG_LEVEL=DEBUG
+      # - JAVA_OPTS=-Dorg.jboss.logging.provider=slf4j
 
     ports:
       - "8443:8443"
       - "8080:8080"
     volumes:
-      - /opt/certs:/opt/bitnami/keycloak/certs  # Подключаем сертификаты
+      - /opt/certs:/certs  # Подключаем сертификаты
     # depends_on:
     #   - postgresql1
 
