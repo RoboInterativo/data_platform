@@ -76,7 +76,7 @@ services:
     container_name: keycloak-node1
     # hostname: keycloak
     environment:
- - KEYCLOAK_BIND_ADDRESS=0.0.0.0
+      - KEYCLOAK_BIND_ADDRESS=0.0.0.0
       - KC_HTTPS_ENABLED=true  # Включаем HTTPS
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
