@@ -76,29 +76,26 @@ services:
     container_name: keycloak-node1
     # hostname: keycloak
     environment:
-      - KEYCLOAK_BIND_ADDRESS=0.0.0.0
-      - KC_HTTPS_ENABLED=false
+ - KEYCLOAK_BIND_ADDRESS=0.0.0.0
+      - KC_HTTPS_ENABLED=true  # Включаем HTTPS
       - KC_HOSTNAME_STRICT=false
       - KC_HOSTNAME_STRICT_HTTPS=false
-      - KC_HTTP_ENABLED=true
-      - KEYCLOAK_ENABLE_STATISTICS=true
-      - KC_HTTP_METRICS_ENABLED=true
-      - KEYCLOAK_DATABASE_HOST=postgres1
+      - KC_HTTP_ENABLED=false  # Отключаем HTTP
+      - KEYCLOAK_HTTPS_CERTIFICATE_FILE=/opt/bitnami/keycloak/certs/tls.crt
+      - KEYCLOAK_HTTPS_CERTIFICATE_KEY_FILE=/opt/bitnami/keycloak/certs/tls.key
+      - KEYCLOAK_ADMIN_USER=admin
+      - KEYCLOAK_ADMIN_PASSWORD=adminpassword
+      - KEYCLOAK_DATABASE_HOST=postgresql1
       - KEYCLOAK_DATABASE_PORT=5432
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
       - KEYCLOAK_DATABASE_PASSWORD=strong_pass
-      - KEYCLOAK_ADMIN_USER=admin
-      - KEYCLOAK_ADMIN_PASSWORD=adminpassword
-      - KEYCLOAK_HTTP_PORT=8080
-      - KEYCLOAK_HTTPS_PORT=8443
-      # - KEYCLOAK_PROXY_ADDRESS_FORWARDING=true
-      - KEYCLOAK_CACHE=ispn
-      # - JGROUPS_DISCOVERY_PROTOCOL=TCP
-      # - JGROUPS_DISCOVERY_PROPERTIES=initial_hosts=keycloak[7600],keycloak2[7600],keycloak3[7600]
+
+
     ports:
-      - "8080:8080"
-      - "8443:8443"      
+      - "8443:8443"
+    volumes:
+      - /opt/certs:/opt/bitnami/keycloak/certs  # Подключаем сертификаты
     # depends_on:
     #   - postgresql1
 
