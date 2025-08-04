@@ -87,6 +87,7 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=adminpassword
       - KEYCLOAK_DATABASE_HOST=postgres1
       - KEYCLOAK_DATABASE_PORT=5432
+      - KEYCLOAK_HTTPS_PORT=8443
       - KEYCLOAK_DATABASE_NAME=access_service
       - KEYCLOAK_DATABASE_USER=access_service
       - KEYCLOAK_DATABASE_PASSWORD=strong_pass
