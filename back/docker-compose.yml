@@ -16,7 +16,7 @@ services:
   #     - POSTGRES_DB=airflow
     ports:
       - 3309:3306
-  mysql:
+  mysql9:
     image: mysql:9
     hostname: mysql-service2
     container_name: mysql9
