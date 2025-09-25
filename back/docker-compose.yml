@@ -15,6 +15,22 @@ services:
   #     - POSTGRES_PASSWORD=airflow
   #     - POSTGRES_DB=airflow
     ports:
+      - 3309:3306
+  mysql:
+    image: mysql:9
+    hostname: mysql-service2
+    container_name: mysql9
+    volumes:
+      - data9:/var/lib/mysql
+  # postgres:
+  #   image: postgres:12-alpine
+  #   restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=hHF2kwyJ8No4vWi
+  #     - POSTGRES_USER=airflow
+  #     - POSTGRES_PASSWORD=airflow
+  #     - POSTGRES_DB=airflow
+    ports:
       - 3306:3306
   #   volumes:
   #     - /tmp:/tmp
@@ -23,3 +39,4 @@ services:
   #
 volumes:
   data:
+  data9:
