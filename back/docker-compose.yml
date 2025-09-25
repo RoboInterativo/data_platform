@@ -4,7 +4,7 @@ services:
     image: mysql:5.7
     hostname: mysql-service
     volumes:
-      - /tmp:/ /var/lib/mysql
+      - data:/var/lib/mysql
   # postgres:
   #   image: postgres:12-alpine
   #   restart: always
@@ -14,9 +14,11 @@ services:
   #     - POSTGRES_PASSWORD=airflow
   #     - POSTGRES_DB=airflow
     ports:
-      - 5432:5432
+      - 3306:3306
   #   volumes:
   #     - /tmp:/tmp
   #   networks:
   #     - confluent
   #
+volumes:
+  data:
