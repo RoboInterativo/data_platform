@@ -3,6 +3,7 @@ services:
   mysql:
     image: mysql:5.7
     hostname: mysql-service
+    container_name: mysql
     volumes:
       - data:/var/lib/mysql
   # postgres:
