@@ -46,7 +46,7 @@ def generate_leads(conn, num=1000):
             is_duplicate = random.random() < 0.03  # 3% дубликатов
 
             created_at = fake.date_time_between(
-                start_date='-6 months',
+                start_date='-6m',
                 end_date='now'
             )
 
@@ -94,7 +94,7 @@ def generate_sales(conn):
                 random.randint(1, 15),
                 f"PROP_{random.randint(1000, 9999)}",
                 sale_amount,
-                fake.date_between(start_date='-3 months', end_date='today'),
+                fake.date_between(start_date='-3m', end_date='today'),
                 sale_amount * random.uniform(0.02, 0.05),
                 random.choices(['completed', 'failed', 'pending'], weights=[0.7, 0.2, 0.1])[0],
                 random.randint(1, 90),
@@ -109,7 +109,7 @@ def generate_post_sale_services(conn):
         completed_sales = [row[0] for row in cur.fetchall()]
 
         for sale_id in completed_sales:
-            service_date = fake.date_between(start_date='-2 months', end_date='today')
+            service_date = fake.date_between(start_date='-2m', end_date='today')
 
             cur.execute("""
                 INSERT INTO post_sale_services
@@ -141,7 +141,7 @@ def generate_web_analytics(conn, num=5000):
             """, (
                 f"session_{i}",
                 random.choice(campaign_ids),
-                fake.date_between(start_date='-3 months', end_date='today'),
+                fake.date_between(start_date='3m', end_date='today'),
                 random.randint(1, 50),
                 random.randint(10, 1800),
                 random.random() < 0.08  # 8% конверсия
