@@ -100,7 +100,7 @@ services:
       - hbase
 
   init:
-    image: airflow-s3-mssql
+    image: apache/airflow:slim-3.1.0-python3.12
     depends_on:
       - postgres
     environment: *airflow_environment
