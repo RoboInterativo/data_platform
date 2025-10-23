@@ -1,7 +1,6 @@
-version: "3.7"
 services:
   postgres:
-    image: postgres:12-alpine
+    image: postgres:13-alpine
     restart: always
     environment:
       POSTGRES_USER:  airflow
@@ -15,7 +14,10 @@ services:
 
     volumes:
       # - ../2. Init Database:/docker-entrypoint-initdb.d
-      - /data:/var/lib/postgresql/data
+      - pgdata:/var/lib/postgresql/data
       - /tmp:/tmp
+      -./sql:/opt/sql
     ports:
       - "5432:5432"
+volumes:
+  pgdata:
