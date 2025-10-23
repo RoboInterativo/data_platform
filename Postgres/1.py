@@ -141,7 +141,7 @@ def generate_web_analytics(conn, num=5000):
             """, (
                 f"session_{i}",
                 random.choice(campaign_ids),
-                fake.date_between(start_date='3m', end_date='today'),
+                fake.date_between(start_date='-3m', end_date='today'),
                 random.randint(1, 50),
                 random.randint(10, 1800),
                 random.random() < 0.08  # 8% конверсия
