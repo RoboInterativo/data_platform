@@ -1,0 +1,118 @@
+version: '3.7'
+# ====================================== AIRFLOW ENVIRONMENT VARIABLES =======================================
+x-environment: &airflow_environment
+  - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+  - AIRFLOW__CORE__LOAD_DEFAULT_CONNECTIONS=False
+  - AIRFLOW__CORE__LOAD_EXAMPLES=False
+  - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql://airflow:airflow@postgres:5432/airflow
+  - AIRFLOW__CORE__STORE_DAG_CODE=True
+  - AIRFLOW__CORE__STORE_SERIALIZED_DAGS=True
+  - AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
+  - AIRFLOW__WEBSERVER__RBAC=False
+  - AIRFLOW__PROVIDERS_ODBC__ALLOW_DRIVER_IN_EXTRA=True
+  - AIRFLOW__WEBSERVER__SECRET_KEY=SuperSecret
+
+x-airflow-image: &airflow_image apache/airflow:2.0.0-python3.8
+# ====================================== /AIRFLOW ENVIRONMENT VARIABLES ======================================
+services:
+  # dashboard:
+  #   container_name: dashboard
+  #   image: 89.23.103.251:5000/python:3.11-slim
+  #   restart: always
+  #   environment:
+  #     - POSTGRES_USER=airflow
+  #     - POSTGRES_PASSWORD=airflow
+  #     - POSTGRES_DB=dashboard
+  #     - HOME=/opt/dashboard/etl_dashboard
+  #   volumes:
+  #       - ../dashboard:/opt/dashboard
+  #   #command: "/opt/dashboard/run.sh"
+  #   command: tail -f /dev/null
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+     - 1433:1433
+    environment:
+     - ACCEPT_EULA=Y
+     - MSSQL_PID=Standard
+     - SA_PASSWORD=Password!
+     - MSSQL_AGENT_ENABLED=true
+    volumes:
+      - /data:/data
+      - ./scripts:/opt/scripts
+     #
+    networks:
+      - hbase
+  postgres:
+    container_name: postgres
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=airflow
+      - POSTGRES_PASSWORD=airflow
+      - POSTGRES_DB=airflow
+    ports:
+      - "5432"
+    networks:
+      - hbase
+  init:
+    image: airflow-s3-mssql
+    depends_on:
+      - postgres
+    environment: *airflow_environment
+    entrypoint: /bin/bash
+    command: -c 'airflow db upgrade && sleep 5 && airflow users create --username admin --password admin --firstname Anonymous --lastname Admin --role Admin --email admin@example.org'
+    networks:
+      - hbase
+  webserver:
+    container_name: webserver
+    image: airflow-s3-mssql
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 8080:8080
+    volumes:
+      - ./logs:/opt/airflow/logs
+    environment: *airflow_environment
+    command: webserver
+    extra_hosts:
+      - "t-estaff-dl.dellin.local:10.214.72.23"
+    networks:
+      - hbase
+  scheduler:
+    container_name: scheduler
+    image: airflow-s3-mssql
+    restart: always
+    depends_on:
+      - postgres
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./scripts:/opt/airflow/scripts
+      - ./configurations.json:/tmp/conf_file/configurations.json
+      - ./logs:/opt/airflow/logs
+      - volrun:/var/run/httpd
+      - vollog:/var/log/
+
+    networks:
+      - hbase
+
+    environment: *airflow_environment
+    command: scheduler
+    extra_hosts:
+      - "t-estaff-dl.dellin.local:10.214.72.23"
+      - "m1-dc01.dellin.local:10.10.26.11"
+      - "m1-dc02.dellin.local:10.10.26.12"
+      - "m1-dc03.dellin.local:10.10.26.13"
+
+networks:
+  hbase:
+    external:
+      name: hbase
+# networks:
+#   mynetwork:
+#     # external: true
+#     name: bridge
+volumes:
+  volrun:
+  vollog:

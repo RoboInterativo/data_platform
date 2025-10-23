@@ -104,7 +104,7 @@ RUN apt-get autoremove -yqq --purge \
 USER airflow
 # Copy application and files
 COPY ./requirements/common-data.txt ./requirements.txt
-# COPY ./test_connect.py ./
+COPY ./test_connect.py ./
 
 #ENV PATH=$PATH:/usr/src/home/cdc_user/.local/bin
 

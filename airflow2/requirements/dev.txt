@@ -1,0 +1,28 @@
+#
+# Modules for development and testing
+#
+wheel
+
+# Unit-tests
+pytest>=3.6
+pytest-repeat>=0.8.0
+
+# Virtual environments
+virtenv>=0.3.1
+
+# Documentation
+sphinx
+myst-parser
+sphinxcontrib-mermaid
+alabaster
+sphinx_rtd_theme
+
+# Task automation
+twine
+invoke
+invocations
+
+# Profiling
+objgraph
+memory_profiler
+
