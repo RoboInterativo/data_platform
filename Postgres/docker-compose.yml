@@ -16,7 +16,7 @@ services:
       # - ../2. Init Database:/docker-entrypoint-initdb.d
       - pgdata:/var/lib/postgresql/data
       - /tmp:/tmp
-      -./sql:/opt/sql
+      - ./sql:/opt/sql
     ports:
       - "5432:5432"
 volumes:
