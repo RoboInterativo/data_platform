@@ -96,8 +96,8 @@ services:
       - POSTGRES_DB=airflow
     ports:
       - "5432"
-    networks:
-      - hbase
+    # networks:
+    #   - hbase
 
   init:
     image: apache/airflow:slim-3.1.0-python3.12
@@ -106,8 +106,8 @@ services:
     environment: *airflow_environment
     entrypoint: /bin/bash
     command: -c 'airflow db upgrade && sleep 5 && airflow users create --username admin --password admin --firstname Anonymous --lastname Admin --role Admin --email admin@example.org'
-    networks:
-      - hbase
+    # networks:
+    #   - hbase
   webserver:
     container_name: webserver
     image: apache/airflow:slim-3.1.0-python3.12
@@ -122,8 +122,8 @@ services:
     command: webserver
     extra_hosts:
       - "t-estaff-dl.dellin.local:10.214.72.23"
-    networks:
-      - hbase
+    # networks:
+    #   - hbase
   scheduler:
     container_name: scheduler
     image: apache/airflow:slim-3.1.0-python3.12
@@ -138,8 +138,8 @@ services:
       - volrun:/var/run/httpd
       - vollog:/var/log/
 
-    networks:
-      - hbase
+    # networks:
+    #   - hbase
 
     environment: *airflow_environment
     command: scheduler
@@ -149,11 +149,11 @@ services:
       - "m1-dc02.dellin.local:10.10.26.12"
       - "m1-dc03.dellin.local:10.10.26.13"
 
-networks:
-  hbase:
-    external:
-      name: hbase
 # networks:
+#   hbase:
+#     external:
+#       name: hbase
+# # networks:
 #   mynetwork:
 #     # external: true
 #     name: bridge
