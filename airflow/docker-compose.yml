@@ -66,8 +66,8 @@ services:
     image: mysql:9
     hostname: mysql-service
     container_name: mysql
-    networks:
-          - hbase
+    # networks:
+    #       - hbase
     volumes:
       - data9:/var/lib/mysql
   # postgres:
