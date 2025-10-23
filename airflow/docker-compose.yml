@@ -119,7 +119,7 @@ services:
     volumes:
       - ./logs:/opt/airflow/logs
     environment: *airflow_environment
-    command: webserver
+    command: airflow api-server
     extra_hosts:
       - "t-estaff-dl.dellin.local:10.214.72.23"
     # networks:
