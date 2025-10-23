@@ -78,8 +78,8 @@ services:
   #     - POSTGRES_USER=airflow
   #     - POSTGRES_PASSWORD=airflow
   #     - POSTGRES_DB=airflow
-    ports:
-      - 3306:3306
+    # ports:
+    #   - 3306:3306
   #   volumes:
   #     - /tmp:/tmp
   #   networks:
