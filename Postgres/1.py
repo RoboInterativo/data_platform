@@ -28,8 +28,8 @@ def generate_marketing_campaigns(conn, num=20):
                 f"Campaign_{i+1}",
                 random.choice(channels),
                 random.randint(50000, 500000),
-                fake.date_between(start_date='01.01.2020', end_date='01.04.2020'),
-                fake.date_between(start_date='01.02.2025', end_date='23.10.2025'),
+                fake.date_between(start_date='-1y', end_date='-6m'),
+                fake.date_between(start_date='-5m', end_date='today'),
                 random.choice(audiences)
             ))
     conn.commit()
