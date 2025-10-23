@@ -10,8 +10,8 @@ def create_connection():
     return psycopg2.connect(
         host="localhost",
         database="nmarket_analytics",
-        user="postgres",
-        password="password"
+        user="airflow",
+        password="airflow"
     )
 
 def generate_marketing_campaigns(conn, num=20):
