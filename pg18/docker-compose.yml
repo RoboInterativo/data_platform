@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: student
+      POSTGRES_PASSWORD: student123
+      POSTGRES_DB: ggsel
+    volumes:
+      - pgdatanew2:/var/lib/postgresql/data  # Убрали PGDATA
+      - ./sql_scripts:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+volumes:
+  pgdatanew2:
