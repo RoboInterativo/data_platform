@@ -45,6 +45,13 @@ SELECT category, AVG(price) as avg_price
 FROM products
 GROUP BY category;
 ```
+Исправленный запрос
+```sql
+SELECT c.category_name  as category, AVG(price) as avg_price
+FROM products p join categories c on p.category_id =c.category_id
+GROUP BY category;
+```
+
 *Группируем продукты по категориям и считаем среднюю цену в каждой*
 
 ## JOIN операции
