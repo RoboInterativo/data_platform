@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 from decimal import Decimal
 from faker import Faker
 
-fake = Faker('ru_RU')
 
 class DataGenerator:
     def __init__(self, db_name='ggsel2', user='student', password='student123', host='188.120.248.94'):
@@ -17,6 +16,74 @@ class DataGenerator:
         self.conn.autocommit = False
         self.cursor = self.conn.cursor()
         self.generated_emails = set()
+
+    def create_tables(self):
+        """Создание таблиц, если они не существуют"""
+        tables = [
+            """
+            CREATE TABLE IF NOT EXISTS users (
+                user_id SERIAL PRIMARY KEY,
+                email VARCHAR(255) UNIQUE NOT NULL,
+                registration_date DATE NOT NULL,
+                country VARCHAR(100),
+                registration_source VARCHAR(50)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS sellers (
+                seller_id SERIAL PRIMARY KEY,
+                company_name VARCHAR(255) UNIQUE NOT NULL,
+                registration_date DATE NOT NULL,
+                rating DECIMAL(3,2) CHECK (rating >= 0 AND rating <= 5),
+                total_sales INTEGER DEFAULT 0
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS categories (
+                category_id SERIAL PRIMARY KEY,
+                category_name VARCHAR(255) NOT NULL,
+                parent_category_id INTEGER REFERENCES categories(category_id)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS products (
+                product_id SERIAL PRIMARY KEY,
+                seller_id INTEGER REFERENCES sellers(seller_id),
+                category_id INTEGER REFERENCES categories(category_id),
+                product_name VARCHAR(255) NOT NULL,
+                price DECIMAL(10,2) NOT NULL,
+                is_active BOOLEAN DEFAULT TRUE,
+                created_date DATE NOT NULL,
+                total_purchases INTEGER DEFAULT 0
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS orders (
+                order_id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(user_id),
+                product_id INTEGER REFERENCES products(product_id),
+                seller_id INTEGER REFERENCES sellers(seller_id),
+                order_date DATE NOT NULL,
+                status VARCHAR(50) NOT NULL,
+                quantity INTEGER NOT NULL CHECK (quantity > 0),
+                final_price DECIMAL(10,2) NOT NULL,
+                payment_method VARCHAR(50)
+            )
+            """
+        ]
+
+        for table_sql in tables:
+            try:
+                self.cursor.execute(table_sql)
+                print(f"Таблица создана или уже существует")
+            except Exception as e:
+                print(f"Ошибка при создании таблицы: {e}")
+                self.conn.rollback()
+                return False
+
+        self.conn.commit()
+        print("Все таблицы успешно созданы")
+        return True
 
     def generate_users(self, count=1000):
         """Генерация пользователей с уникальными email"""
@@ -281,6 +348,11 @@ class DataGenerator:
         """Генерация всех данных"""
         print("Начинаем генерацию данных...")
 
+        # Сначала создаем таблицы
+        if not self.create_tables():
+            print("Ошибка: не удалось создать таблицы")
+            return
+
         # Очищаем старые данные перед генерацией новых
         self.clear_all_data()
 
@@ -296,12 +368,24 @@ class DataGenerator:
         self.cursor.close()
         self.conn.close()
 
+
 # Запуск генерации
 if __name__ == "__main__":
-    generator = DataGenerator()
+    fake = Faker('ru_RU')
+
+    # Убедитесь, что используете правильные параметры подключения
+    generator = DataGenerator(
+        db_name='ggsel',  # Проверьте название базы данных
+        user='student',
+        password='student123',
+        host='188.120.248.94'
+    )
+
     try:
         generator.generate_all_data()
     except Exception as e:
         print(f"Критическая ошибка: {e}")
+        import traceback
+        traceback.print_exc()
     finally:
         generator.close()
