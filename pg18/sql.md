@@ -128,6 +128,62 @@ SELECT
     RANK() OVER (ORDER BY total_spent DESC) as rank
 FROM users;
 ```
+
+Вариант 1: Используем подзапрос
+
+```sql
+SELECT
+    user_id,
+    total_spent,
+    RANK() OVER (ORDER BY total_spent DESC) as rank
+FROM (
+    SELECT
+        o.user_id,
+        SUM(o.final_price * o.quantity) as total_spent
+    FROM orders o
+    WHERE o.status = 'completed'
+    GROUP BY o.user_id
+) user_spending;```
+
+Вариант 2: Используем CTE
+
+```sql
+WITH user_spending AS (
+    SELECT
+        o.user_id,
+        SUM(o.final_price * o.quantity) as total_spent
+    FROM orders o
+    WHERE o.status = 'completed'
+    GROUP BY o.user_id
+)
+SELECT
+    user_id,
+    total_spent,
+    RANK() OVER (ORDER BY total_spent DESC) as rank
+FROM user_spending;```
+
+Вариант 3: Используем агрегацию в оконной функции (рекомендуется)
+
+```sql
+SELECT DISTINCT
+    o.user_id,
+    SUM(o.final_price * o.quantity) OVER (PARTITION BY o.user_id) as total_spent,
+    RANK() OVER (ORDER BY SUM(o.final_price * o.quantity) OVER (PARTITION BY o.user_id) DESC) as rank
+FROM orders o
+WHERE o.status = 'completed';```
+
+Вариант 4: Самый простой и правильный
+
+```sql
+SELECT
+    o.user_id,
+    SUM(o.final_price * o.quantity) as total_spent,
+    RANK() OVER (ORDER BY SUM(o.final_price * o.quantity) DESC) as rank
+FROM orders o
+WHERE o.status = 'completed'
+GROUP BY o.user_id;
+```
+
 *Ранжируем пользователей по потраченной сумме*
 
 ## Работа с датами и временем
